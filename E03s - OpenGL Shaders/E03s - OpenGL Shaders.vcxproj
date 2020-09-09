@@ -14,7 +14,7 @@
     <ProjectGuid>{CE46BE5A-0C74-484C-ADAA-C15DE6570B29}</ProjectGuid>
     <RootNamespace>E03s - OpenGL Shaders</RootNamespace>
     <ProjectName>E03s - OpenGL Shaders</ProjectName>
-    <WindowsTargetPlatformVersion>10.0.18362.0</WindowsTargetPlatformVersion>
+    <WindowsTargetPlatformVersion>10.0</WindowsTargetPlatformVersion>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">

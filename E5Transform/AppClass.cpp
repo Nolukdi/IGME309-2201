@@ -36,7 +36,7 @@ void Application::Display(void)
 	//Starting translation value
 	static float value = -5.0f;
 
-	//Value step
+	//Translation step
 	value += 0.1f;
 
 	//Initialize vector

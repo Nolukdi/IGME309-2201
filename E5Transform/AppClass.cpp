@@ -1,17 +1,13 @@
 #include "AppClass.h"
 void Application::InitVariables(void)
 {
-	//Change this to your name and email
-	m_sProgrammer = "Alex Di Filippo - ald1289@rit.edu";
-
-	//Set the position and target of the camera
-	//(I'm at [0,0,10], looking at [0,0,0] and up is the positive Y axis)
-	m_pCameraMngr->SetPositionTargetAndUpward(AXIS_Z * 10.0f, ZERO_V3, AXIS_Y);
-
-	//Allocate the memory for the Meshes
+	//Define amount of meshes
 	meshAmount = 46;
+
+	//Loop through mesh list
 	for (uint i = 0; i < meshAmount; ++i)
 	{
+		//Initialize meshes
 		MyMesh* pMesh = new MyMesh();
 		meshes.push_back(pMesh);
 		meshes[i]->GenerateCube(1.0f, C_BLACK);
@@ -34,79 +30,90 @@ void Application::Display(void)
 	ClearScreen();
 
 	//Calculate the model, view and projection matrix
-	matrix4 m4Projection = m_pCameraMngr->GetProjectionMatrix();
 	matrix4 m4View = m_pCameraMngr->GetViewMatrix();
-
-	//Get a timer
-	static float fTimer = 0;	//store the new timer
-	static uint uClock = m_pSystem->GenClock(); //generate a new clock for that timer
-	fTimer += static_cast<float>(m_pSystem->GetDeltaTime(uClock)); //get the delta time for that timer
-
-	//Draw Meshes
-	uint i = 0;
-	static float fHorizontal = -10.0f;
-	static vector3 v3Position(fHorizontal, 0.0f, 0.0f);
+	matrix4 m4Projection = m_pCameraMngr->GetProjectionMatrix();
 	
-	v3Position.x = fHorizontal + fTimer;
-	v3Position.y = glm::cos(glm::radians(fTimer * 60.0f));
-	matrix4 m4Position = glm::translate(vector3(-5.0f, -3.0f, -15.0f)) * glm::translate(v3Position);
+	//Starting translation value
+	static float value = -5.0f;
 
-	//first row
-	for (int a = 3; a < 7; a++)
+	//Value step
+	value += 0.1f;
+
+	//Initialize vector
+	int i = 0;
+	static float startingX = -10.0f;
+	static vector3 vecPos(startingX, 0.0f, 0.0f);
+
+	//Translate object across screen
+	matrix4 m4Position = glm::translate(vector3(value, -3.0f, -15.0f)) * glm::translate(vecPos);
+
+	//For everything in the first row
+	for (int a = 3; a <= 7; a++)
 	{
-		if (i == 5)
+		//If in middle place
+		if (a == 5)
 		{
+			//Skip
 			a++;
 		}
 
-		meshes[i]->Render(m4Projection, m4View, glm::translate(m4Position, vector3(3.0f, 0.0f, 0.0f))); ++i;
+		//Draw cubes
+		meshes[i]->Render(m4Projection, m4View, glm::translate(m4Position, vector3(a, 0.0f, 0.0f))); ++i;
 	}
 
-	//second row
+	//For everything in the second row, draw at these specific points
 	meshes[i]->Render(m4Projection, m4View, glm::translate(m4Position, vector3(0.0f, 1.0f, 0.0f))); ++i;
 	meshes[i]->Render(m4Projection, m4View, glm::translate(m4Position, vector3(2.0f, 1.0f, 0.0f))); ++i;
 	meshes[i]->Render(m4Projection, m4View, glm::translate(m4Position, vector3(8.0f, 1.0f, 0.0f))); ++i;
 	meshes[i]->Render(m4Projection, m4View, glm::translate(m4Position, vector3(10.0f, 1.0f, 0.0f))); ++i;
 
-	//third row
+	//For everything in the third row
 	for (int a = 0; a < 10; a++)
 	{
+		//If it's in the second or second to last spot
 		if (a == 1 || a == 9)
 		{
+			//Skip
 			a++;
 		}
 
+		//Draw cubes
 		meshes[i]->Render(m4Projection, m4View, glm::translate(m4Position, vector3(a, 2.0f, 0.0f))); ++i;
 	}
 
-	//fourth row
+	//For everything in the fourth row
 	for (int a = 0; a < 11; a++)
 	{
+		//Draw cubes
 		meshes[i]->Render(m4Projection, m4View, glm::translate(m4Position, vector3(a, 3.0f, 0.0f))); ++i;
 	}
 
-	//fifth row
-	for (int a = 0; a < 9; a++)
+	//For everything in the fifth row
+	for (int a = 1; a <= 9; a++)
 	{
+		//If it's in the 4th or 8th spot
 		if (a == 3 || a == 7)
 		{
+			//Skip
 			a++;
 		}
 
+		//Draw cubes
 		meshes[i]->Render(m4Projection, m4View, glm::translate(m4Position, vector3(a, 4.0f, 0.0f))); ++i;
 	}
-
-	//sixth row
+	
+	//For everything in the sixth row (starting from 2)
 	for (int a = 2; a < 9; a++)
 	{
+		//Draw cubes
 		meshes[i]->Render(m4Projection, m4View, glm::translate(m4Position, vector3(a, 5.0f, 0.0f))); ++i;
 	}
 
-	//seventh row
+	//For everything in the seventh row, draw at these specific points
 	meshes[i]->Render(m4Projection, m4View, glm::translate(m4Position, vector3(3, 6.0f, 0.0f))); ++i;
 	meshes[i]->Render(m4Projection, m4View, glm::translate(m4Position, vector3(7, 6.0f, 0.0f))); ++i;
 
-	//eight row
+	//For everything in the eighth row, draw at these specific points
 	meshes[i]->Render(m4Projection, m4View, glm::translate(m4Position, vector3(2, 7.0f, 0.0f))); ++i;
 	meshes[i]->Render(m4Projection, m4View, glm::translate(m4Position, vector3(8, 7.0f, 0.0f))); ++i;
 

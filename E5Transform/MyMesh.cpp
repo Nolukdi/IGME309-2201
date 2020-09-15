@@ -1,5 +1,4 @@
 #include "MyMesh.h"
-#include "Math.h"
 void MyMesh::Init(void)
 {
 	m_bBinded = false;
@@ -106,7 +105,7 @@ void MyMesh::CompileOpenGL3X(void)
 	glBindBuffer(GL_ARRAY_BUFFER, m_VBO);//Bind the VBO
 	glBufferData(GL_ARRAY_BUFFER, m_uVertexCount * 2 * sizeof(vector3), &m_lVertex[0], GL_STATIC_DRAW);//Generate space for the VBO
 
-	// Position attribute
+																									   // Position attribute
 	glEnableVertexAttribArray(0);
 	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 2 * sizeof(vector3), (GLvoid*)0);
 
@@ -122,7 +121,7 @@ void MyMesh::Render(matrix4 a_mProjection, matrix4 a_mView, matrix4 a_mModel)
 {
 	// Use the buffer and shader
 	GLuint nShader = m_pShaderMngr->GetShaderID("Basic");
-	glUseProgram(nShader); 
+	glUseProgram(nShader);
 
 	//Bind the VAO of this object
 	glBindVertexArray(m_VAO);
@@ -134,11 +133,11 @@ void MyMesh::Render(matrix4 a_mProjection, matrix4 a_mView, matrix4 a_mModel)
 	//Final Projection of the Camera
 	matrix4 m4MVP = a_mProjection * a_mView * a_mModel;
 	glUniformMatrix4fv(MVP, 1, GL_FALSE, glm::value_ptr(m4MVP));
-	
+
 	//Solid
 	glUniform3f(wire, -1.0f, -1.0f, -1.0f);
 	glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
-	glDrawArrays(GL_TRIANGLES, 0, m_uVertexCount);  
+	glDrawArrays(GL_TRIANGLES, 0, m_uVertexCount);
 
 	//Wire
 	glUniform3f(wire, 1.0f, 0.0f, 1.0f);
@@ -154,8 +153,8 @@ void MyMesh::AddTri(vector3 a_vBottomLeft, vector3 a_vBottomRight, vector3 a_vTo
 {
 	//C
 	//| \
-	//A--B
-	//This will make the triangle A->B->C 
+		//A--B
+//This will make the triangle A->B->C 
 	AddVertexPosition(a_vBottomLeft);
 	AddVertexPosition(a_vBottomRight);
 	AddVertexPosition(a_vTopLeft);
@@ -187,17 +186,17 @@ void MyMesh::GenerateCube(float a_fSize, vector3 a_v3Color)
 	//|  |
 	//0--1
 
-	vector3 point0(-fValue,-fValue, fValue); //0
-	vector3 point1( fValue,-fValue, fValue); //1
-	vector3 point2( fValue, fValue, fValue); //2
+	vector3 point0(-fValue, -fValue, fValue); //0
+	vector3 point1(fValue, -fValue, fValue); //1
+	vector3 point2(fValue, fValue, fValue); //2
 	vector3 point3(-fValue, fValue, fValue); //3
 
-	vector3 point4(-fValue,-fValue,-fValue); //4
-	vector3 point5( fValue,-fValue,-fValue); //5
-	vector3 point6( fValue, fValue,-fValue); //6
-	vector3 point7(-fValue, fValue,-fValue); //7
+	vector3 point4(-fValue, -fValue, -fValue); //4
+	vector3 point5(fValue, -fValue, -fValue); //5
+	vector3 point6(fValue, fValue, -fValue); //6
+	vector3 point7(-fValue, fValue, -fValue); //7
 
-	//F
+											  //F
 	AddQuad(point0, point1, point3, point2);
 
 	//B
@@ -238,7 +237,7 @@ void MyMesh::GenerateCuboid(vector3 a_v3Dimensions, vector3 a_v3Color)
 	vector3 point6(v3Value.x, v3Value.y, -v3Value.z); //6
 	vector3 point7(-v3Value.x, v3Value.y, -v3Value.z); //7
 
-	//F
+													   //F
 	AddQuad(point0, point1, point3, point2);
 
 	//B
@@ -276,37 +275,13 @@ void MyMesh::GenerateCone(float a_fRadius, float a_fHeight, int a_nSubdivisions,
 	Release();
 	Init();
 
-	//Creates vertices
-	std::vector<vector3> vertices;
-
-	//Starts position on circle and finds the size of subdivisions in radians
-	GLfloat angRad = 0;
-	GLfloat subRad = 2 * PI / a_nSubdivisions;
-
-	//Loops through all subdivisions
-	for (int i = 0; i < a_nSubdivisions; i++)
-	{
-		//Sets up a temporary position vertex based off of current angle (radians)
-		vector3 temp = vector3(cos(angRad) * a_fRadius, sin(angRad) * a_fRadius, 0.0f);
-
-		//Moves to next subdivision
-		angRad += subRad;
-
-		//Add vertex to shape
-		vertices.push_back(temp);
-	}
-
-	//Loops through all subdivisions again (will cause runtime error if not separated)
-	for (int i = 0; i < a_nSubdivisions; i++)
-	{
-		//Adds triangle using center point, current vertex, and next vertex (modded by subdivisions)
-		AddTri(vertices[(i + 1) % a_nSubdivisions] - vector3(0.0f, 0.0f, 0.5f), 
-			vertices[i] - vector3(0.0f, 0.0f, 0.5f), vector3(0.0f, 0.0f, -0.5f));
-
-		//Adds triangle using center point above to create cone shape
-		AddTri(vector3(0.0f, 0.0f, 0.5f), vertices[i] - vector3(0.0f, 0.0f, 0.5f), 
-			vertices[(i + 1) % a_nSubdivisions] - vector3(0.0f, 0.0f, 0.5f));
-	}
+	// Replace this with your code
+	Mesh* pMesh = new Mesh();
+	pMesh->GenerateCone(a_fRadius, a_fHeight, a_nSubdivisions, a_v3Color);
+	m_lVertexPos = pMesh->GetVertexList();
+	m_uVertexCount = m_lVertexPos.size();
+	SafeDelete(pMesh);
+	// -------------------------------
 
 	// Adding information about color
 	CompleteMesh(a_v3Color);
@@ -328,39 +303,13 @@ void MyMesh::GenerateCylinder(float a_fRadius, float a_fHeight, int a_nSubdivisi
 	Release();
 	Init();
 
-	//Creates vertices
-	std::vector<vector3> vertices;
-
-	//Starts position on circle and finds the size of subdivisions in radians
-	GLfloat angRad = 0;
-	GLfloat subRad = 2 * PI / a_nSubdivisions;
-
-	//Loops through all subdivisions
-	for (int i = 0; i < a_nSubdivisions; i++)
-	{
-		//Sets up a temporary position vertex based off of current angle (radians)
-		vector3 temp = vector3(cos(angRad) * a_fRadius, sin(angRad) * a_fRadius, 0.0f);
-
-		//Moves to next subdivision
-		angRad += subRad;
-
-		//Add vertex to shape
-		vertices.push_back(temp);
-	}
-
-	//Loops through all subdivisions again (will cause runtime error if not separated)
-	for (int i = 0; i < a_nSubdivisions; i++)
-	{
-		//Adds triangles to create bottom circle
-		AddTri(vertices[(i + 1) % a_nSubdivisions] - vector3(0.0f, 0.0f, 0.5f),  vertices[i] - vector3(0.0f, 0.0f, 0.5f), vector3(0.0f, 0.0f, -0.5f));
-
-		//Adds triangle using values in front of object to create top circle
-		AddTri(vertices[i] + vector3(0.0f, 0.0f, 0.5f), (vertices[(i + 1) % a_nSubdivisions]) + vector3(0.0f, 0.0f, 0.5f), vector3(0.0f, 0.0f, 0.5f));
-
-		//Adds quads to the sides of the cylinder
-		AddQuad(vertices[i] - vector3(0.0f, 0.0f, 0.5f), vertices[(i + 1) % a_nSubdivisions] - vector3(0.0f, 0.0f, 0.5f), 
-			vertices[i] + vector3(0.0f, 0.0f, 0.5f), (vertices[(i + 1) % a_nSubdivisions]) + vector3(0.0f, 0.0f, 0.5f));
-	}
+	// Replace this with your code
+	Mesh* pMesh = new Mesh();
+	pMesh->GenerateCylinder(a_fRadius, a_fHeight, a_nSubdivisions, a_v3Color);
+	m_lVertexPos = pMesh->GetVertexList();
+	m_uVertexCount = m_lVertexPos.size();
+	SafeDelete(pMesh);
+	// -------------------------------
 
 	// Adding information about color
 	CompleteMesh(a_v3Color);
@@ -388,53 +337,13 @@ void MyMesh::GenerateTube(float a_fOuterRadius, float a_fInnerRadius, float a_fH
 	Release();
 	Init();
 
-
-	//Creates vertices
-	std::vector<vector3> vertices;
-	std::vector<vector3> inVertices;
-
-	//Starts position on circle and finds the size of subdivisions in radians
-	GLfloat angRad = 0;
-	GLfloat subRad = 2 * PI / a_nSubdivisions;
-
-	//Loops through all subdivisions
-	for (int i = 0; i < a_nSubdivisions; i++)
-	{
-		//Sets up a temporary position vertex based off of current angle (radians)
-		vector3 temp = vector3(cos(angRad) * a_fOuterRadius, sin(angRad) * a_fOuterRadius, 0.0f);
-		vector3 temp2 = vector3(cos(angRad) * a_fInnerRadius, sin(angRad) * a_fInnerRadius, 0.0f);
-
-		//Moves to next subdivision
-		angRad += subRad;
-
-		//Add vertex to shape
-		vertices.push_back(temp);
-		inVertices.push_back(temp2);
-	}
-
-	//Loops through all subdivisions again (will cause runtime error if not separated)
-	for (int i = 0; i < a_nSubdivisions; i++)
-	{
-		//Adds quads to top and bottom of tube to form rings
-		AddQuad(inVertices[i] - vector3(0.0f, 0.0f, 0.5f), 
-			inVertices[(i + 1) % a_nSubdivisions] - vector3(0.0f, 0.0f, 0.5f), 
-			vertices[i] - vector3(0.0f, 0.0f, 0.5f), 
-			vertices[(i + 1) % a_nSubdivisions] - vector3(0.0f, 0.0f, 0.5f));
-		AddQuad(vertices[i] + vector3(0.0f, 0.0f, 0.5f), 
-			(vertices[(i + 1) % a_nSubdivisions]) + vector3(0.0f, 0.0f, 0.5f), 
-			inVertices[i] + vector3(0.0f, 0.0f, 0.5f), 
-			(inVertices[(i + 1) % a_nSubdivisions]) + vector3(0.0f, 0.0f, 0.5f));
-
-		//Adds quads to inside and outside to close holes
-		AddQuad(inVertices[i] + vector3(0.0f, 0.0f, 0.5f),
-			(inVertices[(i + 1) % a_nSubdivisions]) + vector3(0.0f, 0.0f, 0.5f),
-			inVertices[i] - vector3(0.0f, 0.0f, 0.5f), 
-			inVertices[(i + 1) % a_nSubdivisions] - vector3(0.0f, 0.0f, 0.5f));
-		AddQuad(vertices[i] - vector3(0.0f, 0.0f, 0.5f), 
-			vertices[(i + 1) % a_nSubdivisions] - vector3(0.0f, 0.0f, 0.5f),
-			vertices[i] + vector3(0.0f, 0.0f, 0.5f),
-			(vertices[(i + 1) % a_nSubdivisions]) + vector3(0.0f, 0.0f, 0.5f));
-	}
+	// Replace this with your code
+	Mesh* pMesh = new Mesh();
+	pMesh->GenerateTube(a_fOuterRadius, a_fInnerRadius, a_fHeight, a_nSubdivisions, a_v3Color);
+	m_lVertexPos = pMesh->GetVertexList();
+	m_uVertexCount = m_lVertexPos.size();
+	SafeDelete(pMesh);
+	// -------------------------------
 
 	// Adding information about color
 	CompleteMesh(a_v3Color);
@@ -464,58 +373,18 @@ void MyMesh::GenerateTorus(float a_fOuterRadius, float a_fInnerRadius, int a_nSu
 	Release();
 	Init();
 
-	//Starts position on circle and finds the size of subdivisions in radians
-	GLfloat angRad = 0;
-	GLfloat outRad = 0;
-	GLfloat subRad = 2 * PI / a_nSubdivisionsA;
-	GLfloat outerRad = 2 * PI / a_nSubdivisionsB;
-
-	//Creates vertices
-	std::vector<vector3> vertices;
-	std::vector<vector3> inVertices;
-	std::vector<vector3> outVertices;
-
-	//Loops through all subdivisions
-	for (int i = 0; i < a_nSubdivisionsA; i++)
-	{
-		//Sets up a temporary position vertex based off of current angle (radians)
-		vector3 temp = vector3(cos(angRad) * a_fOuterRadius, sin(angRad) * a_fOuterRadius, 0.0f);
-		vector3 temp2 = vector3(cos(angRad) * a_fInnerRadius, sin(angRad) * a_fInnerRadius, 0.0f);
-		vector3 temp3 = vector3(sin(outRad) * a_fOuterRadius, cos(outRad) * a_fOuterRadius, 0.0f);
-
-		//Moves to next subdivision
-		angRad += subRad;
-
-		//Add vertex to shape
-		vertices.push_back(temp);
-		inVertices.push_back(temp2);
-		outVertices.push_back(temp3);
-	}
-
-	//Loops through all subdivisions again (will cause runtime error if not separated)
-	for (int i = 0; i < a_nSubdivisionsA; i++)
-	{
-		//Adds quads to top and bottom of tube to form rings
-		AddQuad(vertices[i], vertices[(i + 1) % a_nSubdivisionsA], inVertices[i], inVertices[(i + 1) % a_nSubdivisionsA]);
-		AddQuad(vertices[i] + vector3(0.0f, 0.0f, 0.2f),
-			(vertices[(i + 1) % a_nSubdivisionsA]) + vector3(0.0f, 0.0f, 0.2f),
-			inVertices[i] + vector3(0.0f, 0.0f, 0.2f),
-			(inVertices[(i + 1) % a_nSubdivisionsA]) + vector3(0.0f, 0.0f, 0.2f));
-
-		//Loops through each individual loop subdivision
-		for (int a = 0; a < a_nSubdivisionsB; a++)
-		{
-			//Adds quads to inside and outside to close holes
-			
-			outRad += outerRad;
-		}
-	}
+	// Replace this with your code
+	Mesh* pMesh = new Mesh();
+	pMesh->GenerateTorus(a_fOuterRadius, a_fInnerRadius, a_nSubdivisionsA, a_nSubdivisionsB, a_v3Color);
+	m_lVertexPos = pMesh->GetVertexList();
+	m_uVertexCount = m_lVertexPos.size();
+	SafeDelete(pMesh);
+	// -------------------------------
 
 	// Adding information about color
 	CompleteMesh(a_v3Color);
 	CompileOpenGL3X();
 }
-
 void MyMesh::GenerateSphere(float a_fRadius, int a_nSubdivisions, vector3 a_v3Color)
 {
 	if (a_fRadius < 0.01f)
@@ -533,40 +402,13 @@ void MyMesh::GenerateSphere(float a_fRadius, int a_nSubdivisions, vector3 a_v3Co
 	Release();
 	Init();
 
-
-	//Creates vertices
-	std::vector<vector3> vertices;
-
-	//Starts position on circle and finds the size of subdivisions in radians
-	GLfloat angRad = 0;
-	GLfloat subRad = 2 * PI / a_nSubdivisions;
-
-	//Loops through all subdivisions
-	for (int i = 0; i < a_nSubdivisions; i++)
-	{
-		//Sets up a temporary position vertex based off of current angle (radians)
-		vector3 temp = vector3(cos(angRad) * a_fRadius, sin(angRad) * a_fRadius, 0.0f);
-
-		//Moves to next subdivision
-		angRad += subRad;
-
-		//Add vertex to shape
-		vertices.push_back(temp);
-	}
-
-	//Loops through all subdivisions again (will cause runtime error if not separated)
-	for (int i = 0; i < a_nSubdivisions; i++)
-	{
-		//Adds triangle using center point, current vertex, and next vertex (modded by subdivisions)
-		AddTri(vertices[(i + 1) % a_nSubdivisions], vertices[i], vector3(0.0f, 0.0f, -0.5f));
-
-		//Adds triangle using center point above to create cone shape
-		AddTri(vector3(0.0f, 0.0f, 0.5f), vertices[i], vertices[(i + 1) % a_nSubdivisions]);
-	}
-
-	// Adding information about color
-	CompleteMesh(a_v3Color);
-	CompileOpenGL3X();
+	// Replace this with your code
+	Mesh* pMesh = new Mesh();
+	pMesh->GenerateSphere(a_fRadius, a_nSubdivisions, a_v3Color);
+	m_lVertexPos = pMesh->GetVertexList();
+	m_uVertexCount = m_lVertexPos.size();
+	SafeDelete(pMesh);
+	// -------------------------------
 
 	// Adding information about color
 	CompleteMesh(a_v3Color);

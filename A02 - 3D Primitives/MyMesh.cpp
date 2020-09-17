@@ -472,42 +472,44 @@ void MyMesh::GenerateTorus(float a_fOuterRadius, float a_fInnerRadius, int a_nSu
 
 	//Creates vertices
 	std::vector<vector3> vertices;
-	std::vector<vector3> inVertices;
-	std::vector<vector3> outVertices;
+	std::vector<vector3> prevVert;
 
 	//Loops through all subdivisions
 	for (int i = 0; i < a_nSubdivisionsA; i++)
 	{
-		//Sets up a temporary position vertex based off of current angle (radians)
-		vector3 temp = vector3(cos(angRad) * a_fOuterRadius, sin(angRad) * a_fOuterRadius, 0.0f);
-		vector3 temp2 = vector3(cos(angRad) * a_fInnerRadius, sin(angRad) * a_fInnerRadius, 0.0f);
-		vector3 temp3 = vector3(sin(outRad) * a_fOuterRadius, cos(outRad) * a_fOuterRadius, 0.0f);
+		//Sets up a temporary position vertex based off of parametric equations for a torus
+		vector3 temp = vector3((a_fOuterRadius + a_fInnerRadius * cos(outRad)) * cos(angRad),
+			(a_fOuterRadius + a_fInnerRadius * cos(outRad)) * sin(angRad),
+			(a_fInnerRadius * sin(outRad)));
 
 		//Moves to next subdivision
 		angRad += subRad;
+		outRad += outerRad;
 
 		//Add vertex to shape
 		vertices.push_back(temp);
-		inVertices.push_back(temp2);
-		outVertices.push_back(temp3);
 	}
 
-	//Loops through all subdivisions again (will cause runtime error if not separated)
+	//Loops through all subdivisions again
 	for (int i = 0; i < a_nSubdivisionsA; i++)
 	{
-		//Adds quads to top and bottom of tube to form rings
-		AddQuad(vertices[i], vertices[(i + 1) % a_nSubdivisionsA], inVertices[i], inVertices[(i + 1) % a_nSubdivisionsA]);
-		AddQuad(vertices[i] + vector3(0.0f, 0.0f, 0.2f),
-			(vertices[(i + 1) % a_nSubdivisionsA]) + vector3(0.0f, 0.0f, 0.2f),
-			inVertices[i] + vector3(0.0f, 0.0f, 0.2f),
-			(inVertices[(i + 1) % a_nSubdivisionsA]) + vector3(0.0f, 0.0f, 0.2f));
+		//If not on first point
+		if (i != 0)
+		{
+			//Add a tri to these current points and the last points (draws flat ring)
+			AddTri(vertices[(i - 1 % a_nSubdivisionsA)], vertices[(i + 1) % a_nSubdivisionsA], vertices[i]);
+		}
 
-		//Loops through each individual loop subdivision
+		//Loops through all ring subdivisions
 		for (int a = 0; a < a_nSubdivisionsB; a++)
 		{
-			//Adds quads to inside and outside to close holes
-			
-			outRad += outerRad;
+			//Adds all vertex positions
+			if (a != 0)
+			{
+				//Adds quad to current points and last points (draws dimension)
+				AddQuad(vertices[a], vertices[(a + 1) % a_nSubdivisionsB],
+					vertices[a - 1], vertices[(a - 1) % a_nSubdivisionsB]);
+			}
 		}
 	}
 
@@ -540,12 +542,16 @@ void MyMesh::GenerateSphere(float a_fRadius, int a_nSubdivisions, vector3 a_v3Co
 	//Starts position on circle and finds the size of subdivisions in radians
 	GLfloat angRad = 0;
 	GLfloat subRad = 2 * PI / a_nSubdivisions;
+	GLfloat ang = 2 * (a_fRadius / a_nSubdivisions);
+	GLfloat u = a_fRadius - abs(ang);
 
 	//Loops through all subdivisions
 	for (int i = 0; i < a_nSubdivisions; i++)
 	{
-		//Sets up a temporary position vertex based off of current angle (radians)
-		vector3 temp = vector3(cos(angRad) * a_fRadius, sin(angRad) * a_fRadius, 0.0f);
+		//Sets up a temporary position vertex based off of parametric equations for a sphere
+		vector3 temp = vector3(sqrt((a_fRadius * a_fRadius) - (u * u)) * cos(angRad),
+			sqrt((a_fRadius * a_fRadius) - (u * u)) * sin(angRad),
+			u);
 
 		//Moves to next subdivision
 		angRad += subRad;
@@ -557,16 +563,19 @@ void MyMesh::GenerateSphere(float a_fRadius, int a_nSubdivisions, vector3 a_v3Co
 	//Loops through all subdivisions again (will cause runtime error if not separated)
 	for (int i = 0; i < a_nSubdivisions; i++)
 	{
-		//Adds triangle using center point, current vertex, and next vertex (modded by subdivisions)
-		AddTri(vertices[(i + 1) % a_nSubdivisions], vertices[i], vector3(0.0f, 0.0f, -0.5f));
+		//Adds triangles to create bottom circle
+		AddTri(vertices[(i + 1) % a_nSubdivisions] - vector3(0.0f, 0.0f, 0.5f), vertices[i] - vector3(0.0f, 0.0f, 0.5f), vector3(0.0f, 0.0f,-0.2f));
 
-		//Adds triangle using center point above to create cone shape
-		AddTri(vector3(0.0f, 0.0f, 0.5f), vertices[i], vertices[(i + 1) % a_nSubdivisions]);
+		//Adds triangle using values in front of object to create top circle
+		AddTri(vertices[i] + vector3(0.0f, 0.0f, 0.5f), (vertices[(i + 1) % a_nSubdivisions]) + vector3(0.0f, 0.0f, 0.5f), vector3(0.0f, 0.0f, 1.2f));
+
+		//Loops again to fill holes
+		for (int a = 0; a < a_nSubdivisions; a++)
+		{
+			//Adds triangle using center point, current vertex, and next vertex (modded by subdivisions)
+			AddTri(vertices[(i + 1) % a_nSubdivisions], ZERO_V3, vertices[i]);
+		}
 	}
-
-	// Adding information about color
-	CompleteMesh(a_v3Color);
-	CompileOpenGL3X();
 
 	// Adding information about color
 	CompleteMesh(a_v3Color);

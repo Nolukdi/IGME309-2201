@@ -543,6 +543,8 @@ void MyMesh::GenerateSphere(float a_fRadius, int a_nSubdivisions, vector3 a_v3Co
 	GLfloat angRad = 0;
 	GLfloat subRad = 2 * PI / a_nSubdivisions;
 	GLfloat ang = 2 * (a_fRadius / a_nSubdivisions);
+
+	//Finds the u value for position calculation
 	GLfloat u = a_fRadius - abs(ang);
 
 	//Loops through all subdivisions

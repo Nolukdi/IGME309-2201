@@ -2,7 +2,7 @@
 void Application::InitVariables(void)
 {
 	//Change this to your name and email
-	m_sProgrammer = "Alberto Bobadilla - labigm@rit.edu";
+	m_sProgrammer = "Alex Di Filippo - ald1289@rit.edu";
 
 	//Set the position and target of the camera
 	m_pCameraMngr->SetPositionTargetAndUpward(vector3(5.0f,3.0f,15.0f), ZERO_V3, AXIS_Y);
@@ -47,19 +47,49 @@ void Application::Display(void)
 	m_pModel->PlaySequence();
 
 	//Get a timer
-	static float fTimer = 0;	//store the new timer
+	static int i = 0;
+	static double fTimer = 0;	//store the new timer
 	static uint uClock = m_pSystem->GenClock(); //generate a new clock for that timer
 	fTimer += m_pSystem->GetDeltaTime(uClock); //get the delta time for that timer
 
-	//calculate the current position
+	//calculate the current position and the start position
 	vector3 v3CurrentPos;
-	
+	vector3 startPos = m_stopsList[m_stopsList.size() - 1];
 
+	//Set percentage mapped to current time
+	float percentage = static_cast<float>(MapValue(fTimer, 0.0, 5.0, 0.0, 1.0));
 
+	//If we have not moved to a point yet
+	if (i == 0)
+	{
+		//Lerp to the first point based on percentage
+		v3CurrentPos = glm::lerp(startPos, m_stopsList[i], percentage);
+	}
 
+	//If we have
+	else
+	{
+		//Lerp to the next point based on percentage
+		v3CurrentPos = glm::lerp(m_stopsList[i - 1], m_stopsList[i], percentage);
+	}
 
-	//your code goes here
-	v3CurrentPos = vector3(0.0f, 0.0f, 0.0f);
+	//If we have reached the next point
+	if (percentage >= 1)
+	{
+		//Set the current position as such
+		v3CurrentPos = m_stopsList[i];
+
+		//Reset timer and move to next point
+		fTimer = 0;
+		i++;
+	}
+
+	//If we have moved to the last point
+	if (i == m_stopsList.size())
+	{
+		//Reset points
+		i = 0;
+	}
 	//-------------------
 	
 

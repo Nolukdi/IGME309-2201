@@ -464,51 +464,58 @@ void MyMesh::GenerateTorus(float a_fOuterRadius, float a_fInnerRadius, int a_nSu
 	Release();
 	Init();
 
-	//Starts position on circle and finds the size of subdivisions in radians
-	GLfloat angRad = 0;
-	GLfloat outRad = 0;
-	GLfloat subRad = 2 * PI / a_nSubdivisionsA;
-	GLfloat outerRad = 2 * PI / a_nSubdivisionsB;
-
 	//Creates vertices
 	std::vector<vector3> vertices;
 	std::vector<vector3> prevVert;
 
-	//Loops through all subdivisions
+	//Points on torus
+	vector3 inPoint = vector3(0, 0, 0);
+	vector3 outPoint = vector3(0, 0, 0);
+	vector3 innerPoint = vector3(0, 0, 0);
+	vector3 outerPoint = vector3(0, 0, 0);
+
+	//Loop through for outer points
 	for (int i = 0; i < a_nSubdivisionsA; i++)
 	{
-		//Sets up a temporary position vertex based off of parametric equations for a torus
-		vector3 temp = vector3((a_fOuterRadius + a_fInnerRadius * cos(outRad)) * cos(angRad),
-			(a_fOuterRadius + a_fInnerRadius * cos(outRad)) * sin(angRad),
-			(a_fInnerRadius * sin(outRad)));
-
-		//Moves to next subdivision
-		angRad += subRad;
-		outRad += outerRad;
-
-		//Add vertex to shape
-		vertices.push_back(temp);
-	}
-
-	//Loops through all subdivisions again
-	for (int i = 0; i < a_nSubdivisionsA; i++)
-	{
-		//If not on first point
-		if (i != 0)
+		//Loop through for inner points
+		for (int a = 0; a <= a_nSubdivisionsB; a++)
 		{
-			//Add a tri to these current points and the last points (draws flat ring)
-			AddTri(vertices[(i - 1 % a_nSubdivisionsA)], vertices[(i + 1) % a_nSubdivisionsA], vertices[i]);
-		}
-
-		//Loops through all ring subdivisions
-		for (int a = 0; a < a_nSubdivisionsB; a++)
-		{
-			//Adds all vertex positions
-			if (a != 0)
+			//Only save the first two points
+			for (int o = 1; o >= 0; o--)
 			{
-				//Adds quad to current points and last points (draws dimension)
-				AddQuad(vertices[a], vertices[(a + 1) % a_nSubdivisionsB],
-					vertices[a - 1], vertices[(a - 1) % a_nSubdivisionsB]);
+				float inDivide = (i + o) % a_nSubdivisionsA + 0.5;
+				float outDivide = a % a_nSubdivisionsB;
+
+				//Use parametric equations to solve for points
+				float x = (a_fOuterRadius + a_fInnerRadius * cosf(inDivide * (2 * PI) / a_nSubdivisionsA)) * cosf(outDivide * (2 * PI) / a_nSubdivisionsB);
+				float y = (a_fOuterRadius + a_fInnerRadius * cosf(inDivide * (2 * PI) / a_nSubdivisionsA)) * sinf(outDivide * (2 * PI) / a_nSubdivisionsB);
+				float z = a_fInnerRadius * sinf(inDivide * (2 * PI) / a_nSubdivisionsA);
+
+				//If just starting loop
+				if (o == 1)
+				{
+					//Save point
+					inPoint = vector3(x, y, z);
+				}
+
+				//If loop is at 0
+				if (o == 0)
+				{
+					//Save point
+					outPoint = vector3(x, y, z);
+				}
+
+				//If not on first subdivision
+				if (a != 0)
+				{
+					//Draw triangles
+					AddTri(innerPoint, outerPoint, inPoint);
+					AddTri(outPoint, inPoint, outerPoint);
+				}
+
+				//make the old points equal to the new points 
+				innerPoint = inPoint;
+				outerPoint = outPoint;
 			}
 		}
 	}

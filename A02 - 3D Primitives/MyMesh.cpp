@@ -469,10 +469,10 @@ void MyMesh::GenerateTorus(float a_fOuterRadius, float a_fInnerRadius, int a_nSu
 	std::vector<vector3> prevVert;
 
 	//Points on torus
-	vector3 inPoint = vector3(0, 0, 0);
-	vector3 outPoint = vector3(0, 0, 0);
 	vector3 innerPoint = vector3(0, 0, 0);
 	vector3 outerPoint = vector3(0, 0, 0);
+	vector3 inPoint = vector3(0, 0, 0);
+	vector3 outPoint = vector3(0, 0, 0);
 
 	//Loop through for outer points
 	for (int i = 0; i < a_nSubdivisionsA; i++)
@@ -513,7 +513,7 @@ void MyMesh::GenerateTorus(float a_fOuterRadius, float a_fInnerRadius, int a_nSu
 					AddTri(outPoint, inPoint, outerPoint);
 				}
 
-				//make the old points equal to the new points 
+				//Saves old points into new points
 				innerPoint = inPoint;
 				outerPoint = outPoint;
 			}

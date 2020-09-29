@@ -414,30 +414,35 @@ void Application::ProcessKeyboard(void)
 	if (sf::Keyboard::isKeyPressed(sf::Keyboard::E))
 		m_pCameraMngr->MoveVertical(fSpeed);
 #pragma endregion
+	//If the x key is pressed
 	if (sf::Keyboard::isKeyPressed(sf::Keyboard::X))
 	{
-		if (fMultiplier)
-			m_v3Rotation.x -= 1.0f;
-		else
-			m_v3Rotation.x += 1.0f;
+		//Sets up quaternion rotated in x by angle
+		quaternion quat = glm::angleAxis(0.1f, vector3(1.0f, 0.0f, 0.0f));
+
+		//Mulitplies orientation with new quaternion
+		m_qOrientation *= quat;
 	}
 	if (sf::Keyboard::isKeyPressed(sf::Keyboard::Y))
 	{
-		if (fMultiplier)
-			m_v3Rotation.y -= 1.0f;
-		else
-			m_v3Rotation.y += 1.0f;
+		//Sets up quaternion rotated in y by angle
+		quaternion quat = glm::angleAxis(0.1f, vector3(0.0f, 1.0f, 0.0f));
+
+		//Mulitplies orientation with new quaternion
+		m_qOrientation *= quat;
 	}
 	if (sf::Keyboard::isKeyPressed(sf::Keyboard::Z))
 	{
-		if (fMultiplier)
-			m_v3Rotation.z -= 1.0f;
-		else
-			m_v3Rotation.z += 1.0f;
+		//Initializes quaternion rotated in z by angle
+		quaternion quat = glm::angleAxis(0.1f, vector3(0.0f, 0.0f, 1.0f));
+
+		//Mulitplies orientation with new quaternion
+		m_qOrientation *= quat;
 	}
 	if (sf::Keyboard::isKeyPressed(sf::Keyboard::R))
 	{
-		m_v3Rotation = vector3(0.0f);
+		//Resets orientation to basic quaternion
+		m_qOrientation = quaternion();
 	}
 }
 //Joystick

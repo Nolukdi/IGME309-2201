@@ -3,7 +3,7 @@ using namespace Simplex;
 void Application::InitVariables(void)
 {
 	//Change this to your name and email
-	m_sProgrammer = "Alberto Bobadilla - labigm@rit.edu";
+	m_sProgrammer = "Alex Di Filippo - ald1289@rit.edu";
 
 	//Set the position and target of the camera
 	//(I'm at [0,0,10], looking at [0,0,0] and up is the positive Y axis)
@@ -54,21 +54,33 @@ void Application::Display(void)
 		break;
 	case 2:
 		m_pCamera->ResetCamera();
+		m_pCamera->SetPerspective(false); //Turns off perspective view
 		break;
 	case 3:
 		m_pCamera->ResetCamera();
+		m_pCamera->SetPositionTargetAndUpward(vector3(25, 0, 0), vector3(0, 0, 0), vector3(0, 0, -1)); //Sets camera to view from side farther away
 		break;
 	case 4:
 		m_pCamera->ResetCamera();
+		m_pCamera->SetPosition(vector3(0, 0, -15)); //Sets new position close and flips over z axis
 		break;
 	case 5:
 		m_pCamera->ResetCamera();
+		m_pCamera->SetPosition(vector3(0, 0, -15)); //Sets new position close and flips over z axis
+		m_pCamera->SetNearFar(vector2(5, 100)); //Clips out front cone
 		break;
 	case 6:
 		m_pCamera->ResetCamera();
+		m_pCamera->SetPosition(vector3(0, 0, -15)); //Sets new position close and flips over z axis
+		m_pCamera->SetNearFar(vector2(3, 10)); //Clips out back ring
 		break;
 	case 7:
 		m_pCamera->ResetCamera();
+		m_pCamera->SetUp(vector3(0, -1, 0)); //Reflects vertically
+		break;
+	case 8:
+		m_pCamera->ResetCamera();
+		m_pCamera->SetPositionTargetAndUpward(vector3(10, 20, 0), vector3(0, 0, 0), vector3(-1, 0, -1)); //Projects over x and z axes, camera moves to show entire projection
 		break;
 	}
 

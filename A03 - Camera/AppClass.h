@@ -18,14 +18,16 @@ class Application
 {
 	MyCamera* m_pCamera = nullptr; //Camera class
 	MyMeshManager* m_pMyMeshMngr = nullptr; //My Mesh Manager
-	String m_sProgrammer = "Alberto Bobadilla - labigm@rit.edu"; //Programmer
+	String m_sProgrammer = "Alex Di Filippo - ald1289@rit.edu"; //Programmer
 private:
 	static ImGuiObject gui; //GUI object
 
 	uint m_uRenderCallCount = 0; //count of render calls per frame
 	uint m_uControllerCount = 0; //count of controllers connected
 
+	vector3 current = vector3();
 	vector3 m_v3Mouse = vector3(); //position of the mouse in the window
+	vector4 m4_Mouse = vector4();
 	bool m_bFPC = false;// First Person Camera flag
 	bool m_bArcBall = false;// Arcball flag
 	quaternion m_qArcBall; //ArcBall quaternion

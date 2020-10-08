@@ -27,6 +27,8 @@ void Application::ProcessMousePressed(sf::Event a_event)
 	case sf::Mouse::Button::Right:
 		gui.m_bMousePressed[2] = true;
 		m_bFPC = true;
+		m4_Mouse = vector4(m_v3Mouse, 0);
+		m_pCamera->SetTarget(m_pCamera->GetProjectionMatrix() * m4_Mouse);
 		break;
 	}
 
@@ -71,6 +73,49 @@ void Application::ProcessKeyPressed(sf::Event a_event)
 	{
 	default: break;
 	case sf::Keyboard::Space:
+		break;
+
+	case sf::Keyboard::W:
+		//Get current camera position
+		current = m_pCamera->GetPosition();
+
+		//Move camera forward
+		m_pCamera->SetPosition(vector3(current.x, current.y, current.z + 0.1f));
+		break;
+	case sf::Keyboard::A:
+		//Get current camera position
+		current = m_pCamera->GetPosition();
+
+		//Move camera sideways
+		m_pCamera->SetPosition(vector3(current.x - 0.1f, current.y, current.z));
+		break;
+	case sf::Keyboard::S:
+		//Get current camera position
+		current = m_pCamera->GetPosition();
+
+		//Move camera backward
+		m_pCamera->SetPosition(vector3(current.x, current.y, current.z - 0.1f));
+		break;
+	case sf::Keyboard::D:
+		//Get current camera position
+		current = m_pCamera->GetPosition();
+
+		//Move camera sideways
+		m_pCamera->SetPosition(vector3(current.x + 0.1f, current.y, current.z));
+		break;
+	case sf::Keyboard::Q:
+		//Get current camera position
+		current = m_pCamera->GetPosition();
+
+		//Move camera up
+		m_pCamera->SetPosition(vector3(current.x, current.y + 0.1f, current.z));
+		break;
+	case sf::Keyboard::E:
+		//Get current camera position
+		current = m_pCamera->GetPosition();
+
+		//Move camera down
+		m_pCamera->SetPosition(vector3(current.x, current.y - 0.1f, current.z));
 		break;
 	}
 	//gui

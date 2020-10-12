@@ -27,8 +27,6 @@ void Application::ProcessMousePressed(sf::Event a_event)
 	case sf::Mouse::Button::Right:
 		gui.m_bMousePressed[2] = true;
 		m_bFPC = true;
-		m4_Mouse = vector4(m_v3Mouse, 0);
-		m_pCamera->SetTarget(m_pCamera->GetProjectionMatrix() * m4_Mouse);
 		break;
 	}
 
@@ -73,49 +71,6 @@ void Application::ProcessKeyPressed(sf::Event a_event)
 	{
 	default: break;
 	case sf::Keyboard::Space:
-		break;
-
-	case sf::Keyboard::W:
-		//Get current camera position
-		current = m_pCamera->GetPosition();
-
-		//Move camera forward
-		m_pCamera->SetPosition(vector3(current.x, current.y, current.z + 0.1f));
-		break;
-	case sf::Keyboard::A:
-		//Get current camera position
-		current = m_pCamera->GetPosition();
-
-		//Move camera sideways
-		m_pCamera->SetPosition(vector3(current.x - 0.1f, current.y, current.z));
-		break;
-	case sf::Keyboard::S:
-		//Get current camera position
-		current = m_pCamera->GetPosition();
-
-		//Move camera backward
-		m_pCamera->SetPosition(vector3(current.x, current.y, current.z - 0.1f));
-		break;
-	case sf::Keyboard::D:
-		//Get current camera position
-		current = m_pCamera->GetPosition();
-
-		//Move camera sideways
-		m_pCamera->SetPosition(vector3(current.x + 0.1f, current.y, current.z));
-		break;
-	case sf::Keyboard::Q:
-		//Get current camera position
-		current = m_pCamera->GetPosition();
-
-		//Move camera up
-		m_pCamera->SetPosition(vector3(current.x, current.y + 0.1f, current.z));
-		break;
-	case sf::Keyboard::E:
-		//Get current camera position
-		current = m_pCamera->GetPosition();
-
-		//Move camera down
-		m_pCamera->SetPosition(vector3(current.x, current.y - 0.1f, current.z));
 		break;
 	}
 	//gui
@@ -413,7 +368,27 @@ void Application::CameraRotation(float a_fSpeed)
 		fDeltaMouse = static_cast<float>(MouseY - CenterY);
 		fAngleX += fDeltaMouse * a_fSpeed;
 	}
-	//Change the Yaw and the Pitch of the camera
+	
+	//Get up vector and subtract current position to get rotation over x
+	vector3 y = m_pCamera->GetAbove() - m_pCamera->GetPosition();
+
+	//Get front vector and subtract current position to get rotation over z
+	vector3 z = m_pCamera->GetTarget() - m_pCamera->GetPosition();
+
+	//Compute right vector (only one without angle value, so cross product is needed to find)
+	vector3 x = glm::cross(y, z);
+
+	//Rotate around y and x axes
+	quaternion yRo = glm::angleAxis(fAngleY, glm::normalize(y));
+	quaternion xRo = glm::angleAxis(fAngleX, glm::normalize(x));
+
+	//Rotate z axis as well (must be vector3 for target set)
+	vector3 zRo = yRo * xRo * z;
+
+	//Set new rotation
+	m_pCamera->SetTarget(m_pCamera->GetPosition() + zRo);
+	
+
 	SetCursorPos(CenterX, CenterY);//Position the mouse in the center
 }
 //Keyboard
@@ -431,10 +406,20 @@ void Application::ProcessKeyboard(void)
 	if (fMultiplier)
 		fSpeed *= 5.0f;
 
+	//Camera movements based on key press
 	if (sf::Keyboard::isKeyPressed(sf::Keyboard::W))
 		m_pCamera->MoveForward(fSpeed);
+	else if (sf::Keyboard::isKeyPressed(sf::Keyboard::A))
+		m_pCamera->MoveSideways(-fSpeed);
 	else if (sf::Keyboard::isKeyPressed(sf::Keyboard::S))
 		m_pCamera->MoveForward(-fSpeed);
+	else if (sf::Keyboard::isKeyPressed(sf::Keyboard::D))
+		m_pCamera->MoveSideways(fSpeed);
+	else if (sf::Keyboard::isKeyPressed(sf::Keyboard::Q))
+		m_pCamera->MoveVertical(fSpeed);
+	else if (sf::Keyboard::isKeyPressed(sf::Keyboard::E))
+		m_pCamera->MoveVertical(-fSpeed);
+	
 #pragma endregion
 }
 //Joystick

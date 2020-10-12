@@ -150,13 +150,36 @@ void Simplex::MyCamera::CalculateProjectionMatrix(void)
 	}
 }
 
+//Methods to move the camera according to keyboard input
 void MyCamera::MoveForward(float a_fDistance)
 {
-	//The following is just an example and does not take in account the forward vector (AKA view vector)
-	m_v3Position += vector3(0.0f, 0.0f,-a_fDistance);
-	m_v3Target += vector3(0.0f, 0.0f, -a_fDistance);
-	m_v3Above += vector3(0.0f, 0.0f, -a_fDistance);
-}
+	//Get front vector (target minus current) and convert to view matrix (normalize)
+	vector3 front = glm::normalize(m_v3Target - m_v3Position);
 
-void MyCamera::MoveVertical(float a_fDistance){}//Needs to be defined
-void MyCamera::MoveSideways(float a_fDistance){}//Needs to be defined
+	//Move camera and all components forward or backward (depending on distance value)
+	m_v3Position += a_fDistance * front;
+	m_v3Above += a_fDistance * front;
+	m_v3Target += a_fDistance * front;
+}
+void MyCamera::MoveVertical(float a_fDistance)
+{
+	//Get the up vector (above minus current) and convert to view matrix (normalize)
+	vector3 up = glm::normalize(m_v3Above - m_v3Position);
+
+	//Move camera and all components up or down (depending on distance value)
+	m_v3Position += a_fDistance * up;
+	m_v3Above += a_fDistance * up;
+	m_v3Target += a_fDistance * up;
+}
+void MyCamera::MoveSideways(float a_fDistance)
+{
+	//Get side vector using cross product of up and front
+	vector3 up = glm::normalize(m_v3Above - m_v3Position);
+	vector3 front = glm::normalize(m_v3Target - m_v3Position);
+	vector3 side = glm::cross(front, up);
+
+	//Move camera and all components right or left (depending on distance value)
+	m_v3Position += a_fDistance * side;
+	m_v3Above += a_fDistance * side;
+	m_v3Target += a_fDistance * side;
+}

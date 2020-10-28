@@ -238,12 +238,12 @@ bool MyRigidBody::IsColliding(MyRigidBody* const a_pOther)
 
 	if (bColliding) //they are colliding
 	{
-		this->AddCollisionWith(a_pOther);
+		AddCollisionWith(a_pOther);
 		a_pOther->AddCollisionWith(this);
 	}
 	else //they are not colliding
 	{
-		this->RemoveCollisionWith(a_pOther);
+		RemoveCollisionWith(a_pOther);
 		a_pOther->RemoveCollisionWith(this);
 	}
 
@@ -274,19 +274,155 @@ void MyRigidBody::AddToRenderList(void)
 	}
 }
 
+//Method to use the Separation Axis Test
 uint MyRigidBody::SAT(MyRigidBody* const a_pOther)
 {
-	/*
-	Your code goes here instead of this comment;
+	//Saving rot matrices
+	matrix4 rot;
+	matrix4 absRot;
 
-	For this method, if there is an axis that separates the two objects
-	then the return will be different than 0; 1 for any separating axis
-	is ok if you are not going for the extra credit, if you could not
-	find a separating axis you need to return 0, there is an enum in
-	Simplex that might help you [eSATResults] feel free to use it.
-	(eSATResults::SAT_NONE has a value of 0)
-	*/
+	//Saving radii
+	float radA;
+	float radB;
 
-	//there is no axis test that separates this two objects
-	return eSATResults::SAT_NONE;
+	//Saving axes of rotation
+	vector3 a[3];
+	vector3 b[3];
+
+	//Saving distance
+	vector3 dist;
+
+	//For all matrix rows
+	for (int i = 0; i < 3; i++)
+	{
+		//For all matrix columns
+		for (int a = 0; a < 3; a++)
+		{
+			//Matrix row, column is equal to the dot product of the model matrices
+			rot[i][a] = glm::dot(GetModelMatrix()[i], a_pOther->GetModelMatrix()[a]);
+
+			//Getting rid of floating point numbers with epsilon
+			absRot[i][a] = abs(rot[i][a]) + FLT_EPSILON;
+		}
+
+		//Sets up axes of rotation
+		a[i] = GetModelMatrix()[i];
+		b[i] = a_pOther->GetModelMatrix()[i];
+	}
+
+	//Getting distance vector
+	dist = a_pOther->GetCenterGlobal() - GetCenterGlobal();
+
+	//Changing coordinate systems
+	dist = vector3(glm::dot(dist, a[0]),
+		glm::dot(dist, a[1]), glm::dot(dist, a[2]));
+
+	//AX, AY, AZ test AND BX, BY, BZ test
+	for(int i = 0; i < 3; i++)
+	{
+		//Gets radius of both objects
+		radA = GetHalfWidth()[i];
+		radB = (a_pOther->GetHalfWidth()[0] * absRot[i][0]) +
+			(a_pOther->GetHalfWidth()[1] * absRot[i][1]) +
+			(a_pOther->GetHalfWidth()[2] * absRot[i][2]);
+
+		//If the absolute value of the distance is more than the two radii combined
+		if (abs(dist[i]) > radA + radB)
+		{
+			//No collision
+			return 1;
+		}
+
+		//Gets radius of both objects
+		radB = a_pOther->GetHalfWidth()[i];
+		radA = (GetHalfWidth()[0] * absRot[i][0]) +
+			(GetHalfWidth()[1] * absRot[i][1]) +
+			(GetHalfWidth()[2] * absRot[i][2]);
+
+		//If the absolute value of the distance is more than the two radii combined
+		if (abs(dist[i]) > radA + radB)
+		{
+			//No collision
+			return 1;
+		}
+	}
+
+	//Ax * Bx test
+	//Get radii
+	radA = GetHalfWidth()[1] * absRot[2][0] + GetHalfWidth()[2] * absRot[1][0];
+	radB = a_pOther->GetHalfWidth()[1] * absRot[0][2] + a_pOther->GetHalfWidth()[2] * absRot[0][1];
+
+	//If the absolute value of the distance (* rotation mat) is greater than two radii combined
+	if (abs(dist[2] * rot[1][0] - dist[1] * rot[2][0]) > radA + radB)
+	{
+		//No collision
+		return 1;
+	}
+
+	//Ax * By test
+	radA = GetHalfWidth()[1] * absRot[2][1] + GetHalfWidth()[2] * absRot[1][1];
+	radB = a_pOther->GetHalfWidth()[0] * absRot[0][2] + a_pOther->GetHalfWidth()[2] * absRot[0][0];
+	if (abs(dist[2] * rot[1][1] - dist[1] * rot[2][1]) > radA + radB)
+	{
+		return 1;
+	}
+
+	//Ax * Bz test
+	radA = GetHalfWidth()[1] * absRot[2][2] + GetHalfWidth()[2] * absRot[1][2];
+	radB = a_pOther->GetHalfWidth()[0] * absRot[0][1] + a_pOther->GetHalfWidth()[1] * absRot[0][0];
+	if (abs(dist[2] * rot[1][2] - dist[1] * rot[2][2]) > radA + radB)
+	{
+		return 1;
+	}
+
+	//Ay x Bx test
+	radA = GetHalfWidth()[0] * absRot[2][0] + GetHalfWidth()[2] * absRot[0][0];
+	radB = a_pOther->GetHalfWidth()[1] * absRot[1][2] + a_pOther->GetHalfWidth()[2] * absRot[1][1];
+	if (abs(dist[0] * rot[2][0] - dist[2] * rot[0][0]) > radA + radB)
+	{
+		return 1;
+	}
+
+	//Ay x By test
+	radA = GetHalfWidth()[0] * absRot[2][1] + GetHalfWidth()[2] * absRot[0][1];
+	radB = a_pOther->GetHalfWidth()[0] * absRot[1][2] + a_pOther->GetHalfWidth()[2] * absRot[1][0];
+	if (abs(dist[0] * rot[2][1] - dist[2] * rot[0][1]) > radA + radB)
+	{
+		return 1;
+	}
+
+	//Ay x Bz test
+	radA = GetHalfWidth()[0] * absRot[2][2] + GetHalfWidth()[2] * absRot[0][2];
+	radB = a_pOther->GetHalfWidth()[0] * absRot[1][1] + a_pOther->GetHalfWidth()[1] * absRot[1][0];
+	if (abs(dist[0] * rot[2][2] - dist[2] * rot[0][2]) > radA + radB)
+	{
+		return 1;
+	}
+
+	//Az x Bx test
+	radA = GetHalfWidth()[0] * absRot[1][0] + GetHalfWidth()[1] * absRot[0][0];
+	radB = a_pOther->GetHalfWidth()[1] * absRot[2][2] + a_pOther->GetHalfWidth()[2] * absRot[2][1];
+	if (abs(dist[1] * rot[0][0] - dist[0] * rot[1][0]) > radA + radB)
+	{
+		return 1;
+	}
+
+	//Ax x By test
+	radA = GetHalfWidth()[0] * absRot[1][1] + GetHalfWidth()[1] * absRot[0][1];
+	radB = a_pOther->GetHalfWidth()[0] * absRot[2][2] + a_pOther->GetHalfWidth()[2] * absRot[2][0];
+	if (abs(dist[1] * rot[0][1] - dist[0] * rot[1][1]) > radA + radB)
+	{
+		return 1;
+	}
+
+	//Az x Bz
+	radA = GetHalfWidth()[0] * absRot[1][2] + GetHalfWidth()[1] * absRot[0][2];
+	radB = a_pOther->GetHalfWidth()[0] * absRot[2][1] + a_pOther->GetHalfWidth()[1] * absRot[2][0];
+	if (abs(dist[1] * rot[0][2] - dist[0] * rot[1][2]) > radA + radB)
+	{
+		return 1;
+	}
+
+	//If the code is able to make it all the way to the end...
+	return eSATResults::SAT_NONE; //There is a collision!
 }

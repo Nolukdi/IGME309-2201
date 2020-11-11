@@ -154,7 +154,7 @@
 
  - 2017/05/26 (1.50) - Removed ImFontConfig::MergeGlyphCenterV in favor of a more multipurpose ImFontConfig::GlyphOffset.
  - 2017/05/01 (1.50) - Renamed ImDrawList::PathFill() (rarely used directly) to ImDrawList::PathFillConvex() for clarity.
- - 2016/11/06 (1.50) - BeginChild(const char*) now applies the stack id to the provided label, consistently with other functions as it should always have been. It shouldn't affect you unless (extremely unlikely) you were appending multiple times to a same child from different locations of the stack id. If that's the case, generate an id with GetId() and use it instead of passing string to BeginChild().
+ - 2016/11/06 (1.50) - BeginChild(const char*) now applies the stack id to the provided label, consistently with other functions as it should always have been. It shouldn't affect you unless (extremely unlikely) you were appending multiple times to a same children from different locations of the stack id. If that's the case, generate an id with GetId() and use it instead of passing string to BeginChild().
  - 2016/10/15 (1.50) - avoid 'void* user_data' parameter to io.SetClipboardTextFn/io.GetClipboardTextFn pointers. We pass io.ClipboardUserData to it.
  - 2016/09/25 (1.50) - style.WindowTitleAlign is now a ImVec2 (ImGuiAlign enum was removed). set to (0.5f,0.5f) for horizontal+vertical centering, (0.0f,0.0f) for upper-left, etc.
  - 2016/07/30 (1.50) - SameLine(x) with x>0.0f is now relative to left of column/group if any, and not always to left of window. This was sort of always the intent and hopefully breakage should be minimal.
@@ -473,8 +473,8 @@
  - window: add a way for very transient windows (non-saved, temporary overlay over hundreds of objects) to "clean" up from the global window list. perhaps a lightweight explicit cleanup pass.
  - window: calling SetNextWindowSize() every frame with <= 0 doesn't do anything, may be useful to allow (particularly when used for a single axis) (#690)
  - window: auto-fit feedback loop when user relies on any dynamic layout (window width multiplier, column) appears weird to end-user. clarify.
- - window: allow resizing of child windows (possibly given min/max for each axis?)
- - window: background options for child windows, border option (disable rounding)
+ - window: allow resizing of children windows (possibly given min/max for each axis?)
+ - window: background options for children windows, border option (disable rounding)
  - window: add a way to clear an existing window instead of appending (e.g. for tooltip override using a consistent api rather than the deferred tooltip)
  - window: resizing from any sides? + mouse cursor directives for app.
 !- window: begin with *p_open == false should return false.
@@ -600,7 +600,7 @@
  - misc: double-clicking on title bar to minimize isn't consistent, perhaps move to single-click on left-most collapse icon?
  - misc: provide HoveredTime and ActivatedTime to ease the creation of animations.
  - style editor: have a more global HSV setter (e.g. alter hue on all elements). consider replacing active/hovered by offset in HSV space? (#438)
- - style editor: color child window height expressed in multiple of line height.
+ - style editor: color children window height expressed in multiple of line height.
  - remote: make a system like RemoteImGui first-class citizen/project (#75)
  - drawlist: move Font, FontSize, FontTexUvWhitePixel inside ImDrawList and make it self-contained (apart from drawing settings?)
  - drawlist: end-user probably can't call Clear() directly because we expect a texture to be pushed in the stack.
@@ -749,7 +749,7 @@ ImGuiStyle::ImGuiStyle()
     WindowMinSize           = ImVec2(32,32);    // Minimum window size
     WindowRounding          = 9.0f;             // Radius of window corners rounding. Set to 0.0f to have rectangular windows
     WindowTitleAlign        = ImVec2(0.0f,0.5f);// Alignment for title bar text
-    ChildWindowRounding     = 0.0f;             // Radius of child window corners rounding. Set to 0.0f to have rectangular child windows
+    ChildWindowRounding     = 0.0f;             // Radius of children window corners rounding. Set to 0.0f to have rectangular children windows
     FramePadding            = ImVec2(4,3);      // Padding within a framed rectangle (used by most widgets)
     FrameRounding           = 0.0f;             // Radius of frame corners rounding. Set to 0.0f to have rectangular frames (used by most widgets).
     ItemSpacing             = ImVec2(8,4);      // Horizontal and vertical spacing between widgets/lines
@@ -2577,9 +2577,9 @@ static void AddWindowToSortedBuffer(ImVector<ImGuiWindow*>& out_sorted_windows, 
             qsort(window->DC.ChildWindows.begin(), (size_t)count, sizeof(ImGuiWindow*), ChildWindowComparer);
         for (int i = 0; i < count; i++)
         {
-            ImGuiWindow* child = window->DC.ChildWindows[i];
-            if (child->Active)
-                AddWindowToSortedBuffer(out_sorted_windows, child);
+            ImGuiWindow* children = window->DC.ChildWindows[i];
+            if (children->Active)
+                AddWindowToSortedBuffer(out_sorted_windows, children);
         }
     }
 }
@@ -2617,12 +2617,12 @@ static void AddWindowToRenderList(ImVector<ImDrawList*>& out_render_list, ImGuiW
     AddDrawListToRenderList(out_render_list, window->DrawList);
     for (int i = 0; i < window->DC.ChildWindows.Size; i++)
     {
-        ImGuiWindow* child = window->DC.ChildWindows[i];
-        if (!child->Active) // clipped children may have been marked not active
+        ImGuiWindow* children = window->DC.ChildWindows[i];
+        if (!children->Active) // clipped children may have been marked not active
             continue;
-        if ((child->Flags & ImGuiWindowFlags_Popup) && child->HiddenFrames > 0)
+        if ((children->Flags & ImGuiWindowFlags_Popup) && children->HiddenFrames > 0)
             continue;
-        AddWindowToRenderList(out_render_list, child);
+        AddWindowToRenderList(out_render_list, children);
     }
 }
 
@@ -2692,14 +2692,14 @@ void ImGui::EndFrame()
         }
     }
 
-    // Sort the window list so that all child windows are after their parent
+    // Sort the window list so that all children windows are after their parent
     // We cannot do that on FocusWindow() because childs may not exist yet
     g.WindowsSortBuffer.resize(0);
     g.WindowsSortBuffer.reserve(g.Windows.Size);
     for (int i = 0; i != g.Windows.Size; i++)
     {
         ImGuiWindow* window = g.Windows[i];
-        if (window->Active && (window->Flags & ImGuiWindowFlags_ChildWindow))       // if a child is active its parent will add it
+        if (window->Active && (window->Flags & ImGuiWindowFlags_ChildWindow))       // if a children is active its parent will add it
             continue;
         AddWindowToSortedBuffer(g.WindowsSortBuffer, window);
     }
@@ -3100,7 +3100,7 @@ static ImGuiWindow* FindHoveredWindow(ImVec2 pos, bool excluding_childs)
         if (excluding_childs && (window->Flags & ImGuiWindowFlags_ChildWindow) != 0)
             continue;
 
-        // Using the clipped AABB so a child window will typically be clipped by its parent.
+        // Using the clipped AABB so a children window will typically be clipped by its parent.
         ImRect bb(window->WindowRectClipped.Min - g.Style.TouchExtraPadding, window->WindowRectClipped.Max + g.Style.TouchExtraPadding);
         if (bb.Contains(pos))
             return window;
@@ -3449,7 +3449,7 @@ static void CloseInactivePopups()
         return;
 
     // When popups are stacked, clicking on a lower level popups puts focus back to it and close popups above it.
-    // Don't close our own child popup windows
+    // Don't close our own children popup windows
     int n = 0;
     if (g.FocusedWindow)
     {
@@ -3636,7 +3636,7 @@ static bool BeginChildEx(const char* name, ImGuiID id, const ImVec2& size_arg, b
     {
         if (size.x == 0.0f)
             flags |= ImGuiWindowFlags_ChildWindowAutoFitX;
-        size.x = ImMax(content_avail.x, 4.0f) - fabsf(size.x); // Arbitrary minimum zero-ish child size of 4.0f (0.0f causing too much issues)
+        size.x = ImMax(content_avail.x, 4.0f) - fabsf(size.x); // Arbitrary minimum zero-ish children size of 4.0f (0.0f causing too much issues)
     }
     if (size.y <= 0.0f)
     {
@@ -3684,9 +3684,9 @@ void ImGui::EndChild()
     }
     else
     {
-        // When using auto-filling child window, we don't provide full width/height to ItemSize so that it doesn't feed back into automatic size-fitting.
+        // When using auto-filling children window, we don't provide full width/height to ItemSize so that it doesn't feed back into automatic size-fitting.
         ImVec2 sz = GetWindowSize();
-        if (window->Flags & ImGuiWindowFlags_ChildWindowAutoFitX) // Arbitrary minimum zero-ish child size of 4.0f causes less trouble than a 0.0f
+        if (window->Flags & ImGuiWindowFlags_ChildWindowAutoFitX) // Arbitrary minimum zero-ish children size of 4.0f causes less trouble than a 0.0f
             sz.x = ImMax(4.0f, sz.x);
         if (window->Flags & ImGuiWindowFlags_ChildWindowAutoFitY)
             sz.y = ImMax(4.0f, sz.y);
@@ -3700,7 +3700,7 @@ void ImGui::EndChild()
     }
 }
 
-// Helper to create a child window / scrolling region that looks like a normal widget frame.
+// Helper to create a children window / scrolling region that looks like a normal widget frame.
 bool ImGui::BeginChildFrame(ImGuiID id, const ImVec2& size, ImGuiWindowFlags extra_flags)
 {
     ImGuiContext& g = *GImGui;
@@ -3783,7 +3783,7 @@ static ImGuiWindow* CreateNewWindow(const char* name, ImVec2 size, ImGuiWindowFl
 
     if (flags & ImGuiWindowFlags_NoSavedSettings)
     {
-        // User can disable loading and saving of settings. Tooltip and child windows also don't store settings.
+        // User can disable loading and saving of settings. Tooltip and children windows also don't store settings.
         window->Size = window->SizeFull = size;
     }
     else
@@ -3971,7 +3971,7 @@ bool ImGui::Begin(const char* name, bool* p_open, const ImVec2& size_on_first_us
         g.SetNextWindowFocus = false;
     }
 
-    // Update known root window (if we are a child window, otherwise window == window->RootWindow)
+    // Update known root window (if we are a children window, otherwise window == window->RootWindow)
     int root_idx, root_non_popup_idx;
     for (root_idx = g.CurrentWindowStack.Size - 1; root_idx > 0; root_idx--)
         if (!(g.CurrentWindowStack[root_idx]->Flags & ImGuiWindowFlags_ChildWindow))
@@ -4104,7 +4104,7 @@ bool ImGui::Begin(const char* name, bool* p_open, const ImVec2& size_on_first_us
         
         // POSITION
 
-        // Position child window
+        // Position children window
         if (flags & ImGuiWindowFlags_ChildWindow)
         {
             window->IndexWithinParent = parent_window->DC.ChildWindows.Size;
@@ -4127,7 +4127,7 @@ bool ImGui::Begin(const char* name, bool* p_open, const ImVec2& size_on_first_us
         else if (flags & ImGuiWindowFlags_ChildMenu)
         {
             // Child menus typically request _any_ position within the parent menu item, and then our FindBestPopupWindowPos() function will move the new menu outside the parent bounds.
-            // This is how we end up with child menus appearing (most-commonly) on the right of the parent menu.
+            // This is how we end up with children menus appearing (most-commonly) on the right of the parent menu.
             IM_ASSERT(window_pos_set_by_api);
             float horizontal_overlap = style.ItemSpacing.x; // We want some overlap to convey the relative depth of each popup (currently the amount of overlap it is hard-coded to style.ItemSpacing.x, may need to introduce another style value).
             ImRect rect_to_avoid;
@@ -8872,7 +8872,7 @@ bool ImGui::BeginMenu(const char* label, bool enabled)
     if (menuset_is_open)
         g.FocusedWindow = window;
 
-    // The reference position stored in popup_pos will be used by Begin() to find a suitable position for the child menu (using FindBestPopupWindowPos).
+    // The reference position stored in popup_pos will be used by Begin() to find a suitable position for the children menu (using FindBestPopupWindowPos).
     ImVec2 popup_pos, pos = window->DC.CursorPos;
     if (window->DC.LayoutType == ImGuiLayoutType_Horizontal)
     {

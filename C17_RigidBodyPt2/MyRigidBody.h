@@ -23,7 +23,7 @@ class MyRigidBody
 	vector3 m_v3ColorColliding = C_RED; //Color when colliding
 	vector3 m_v3ColorNotColliding = C_WHITE; //Color when not colliding
 
-	vector3 m_v3Center = vector3(0.0f); //center point in local space
+	vector3 center = vector3(0.0f); //center point in local space
 	vector3 m_v3MinL = vector3(0.0f); //minimum coordinate in local space
 	vector3 m_v3MaxL = vector3(0.0f); //maximum coordinate in local space
 

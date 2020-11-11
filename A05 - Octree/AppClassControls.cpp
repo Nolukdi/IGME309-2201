@@ -8,7 +8,7 @@ void Application::ProcessMouseMovement(sf::Event a_event)
 	sf::Vector2i window = m_pWindow->getPosition();
 	m_v3Mouse.x = static_cast<float>(mouse.x - window.x);
 	m_v3Mouse.y = static_cast<float>(mouse.y - window.y);
-	if(!m_pSystem->IsWindowFullscreen() && !m_pSystem->IsWindowBorderless())
+	if (!m_pSystem->IsWindowFullscreen() && !m_pSystem->IsWindowBorderless())
 		m_v3Mouse += vector3(-8.0f, -32.0f, 0.0f);
 	gui.io.MousePos = ImVec2(m_v3Mouse.x, m_v3Mouse.y);
 }
@@ -79,7 +79,7 @@ void Application::ProcessKeyPressed(sf::Event a_event)
 		m_bModifier = true;
 		break;
 	}
-	
+
 	//gui
 	gui.io.KeysDown[a_event.key.code] = true;
 	gui.io.KeyCtrl = a_event.key.control;
@@ -111,40 +111,60 @@ void Application::ProcessKeyReleased(sf::Event a_event)
 		bFPSControl = !bFPSControl;
 		m_pCameraMngr->SetFPS(bFPSControl);
 		break;
-	case sf::Keyboard::PageUp:
+	case sf::Keyboard::PageUp: //If page up key is pressed
+		//Increment the current octant
 		++m_uOctantID;
-		/*
-		if (m_uOctantID >= m_pRoot->GetOctantCount())
-			m_uOctantID = - 1;
-		*/
+
+		//If octant ID is larger than amnt of octants
+		if (m_uOctantID >= base->GetOctants())
+		{
+			//Reset it
+			m_uOctantID = -1;
+		}
+
 		break;
-	case sf::Keyboard::PageDown:
+	case sf::Keyboard::PageDown: //If page down key is pressed
+		//Decrement the current octant
 		--m_uOctantID;
-		/*
-		if (m_uOctantID >= m_pRoot->GetOctantCount())
-			m_uOctantID = - 1;
-		*/
+
+		//If octant ID is too large
+		if (m_uOctantID >= base->GetOctants())
+		{
+			//Reset it
+			m_uOctantID = -1;
+		}
+
 		break;
-	case sf::Keyboard::Add:
+	//If up arrow key is pressed (plus sign didn't work on my computer)
+	case sf::Keyboard::Up:
+		//If there aren't too many
 		if (m_uOctantLevels < 4)
 		{
 			m_pEntityMngr->ClearDimensionSetAll();
+
+			//Increment octant levels
 			++m_uOctantLevels;
-			/*
-			SafeDelete(m_pRoot);
-			m_pRoot = new MyOctant(m_uOctantLevels, 5);
-			*/
+
+			//Getting rid of old octree and setting up new
+			SafeDelete(base);
+			base = new MyOctant(m_uOctantLevels, 5);
+
 		}
 		break;
-	case sf::Keyboard::Subtract:
+	//If down arrow key is pressed (minus sign didn't work on my computer)
+	case sf::Keyboard::Down:
+		//If there aren't too few
 		if (m_uOctantLevels > 0)
 		{
 			m_pEntityMngr->ClearDimensionSetAll();
+
+			//Decrement octant levels
 			--m_uOctantLevels;
-			/*
-			SafeDelete(m_pRoot);
-			m_pRoot = new MyOctant(m_uOctantLevels, 5);
-			*/
+
+			//Getting rid of old octree and setting up new
+			SafeDelete(base);
+			base = new MyOctant(m_uOctantLevels, 5);
+
 		}
 		break;
 	case sf::Keyboard::LShift:

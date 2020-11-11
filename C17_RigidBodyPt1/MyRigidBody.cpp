@@ -5,10 +5,10 @@ bool MyRigidBody::GetVisible(void) { return m_bVisible; }
 float MyRigidBody::GetRadius(void) { return m_fRadius; }
 vector3 MyRigidBody::GetColor(void) { return m_v3Color; }
 void MyRigidBody::SetColor(vector3 a_v3Color) { m_v3Color = a_v3Color; }
-vector3 MyRigidBody::GetCenterLocal(void) { return m_v3Center; }
+vector3 MyRigidBody::GetCenterLocal(void) { return center; }
 vector3 MyRigidBody::GetMinLocal(void) { return m_v3MinL; }
 vector3 MyRigidBody::GetMaxLocal(void) { return m_v3MaxL; }
-vector3 MyRigidBody::GetCenterGlobal(void){	return vector3(m_m4ToWorld * vector4(m_v3Center, 1.0f)); }
+vector3 MyRigidBody::GetCenterGlobal(void){	return vector3(m_m4ToWorld * vector4(center, 1.0f)); }
 vector3 MyRigidBody::GetMinGlobal(void) { return m_v3MinG; }
 vector3 MyRigidBody::GetMaxGlobal(void) { return m_v3MaxG; }
 vector3 MyRigidBody::GetHalfWidth(void) { return m_v3HalfWidth; }
@@ -24,7 +24,7 @@ void MyRigidBody::Init(void)
 
 	m_v3Color = C_WHITE;
 
-	m_v3Center = ZERO_V3;
+	center = ZERO_V3;
 	m_v3MinL = ZERO_V3;
 	m_v3MaxL = ZERO_V3;
 
@@ -44,7 +44,7 @@ void MyRigidBody::Swap(MyRigidBody& other)
 
 	std::swap(m_v3Color , other.m_v3Color);
 
-	std::swap(m_v3Center , other.m_v3Center);
+	std::swap(center , other.center);
 	std::swap(m_v3MinL , other.m_v3MinL);
 	std::swap(m_v3MaxL , other.m_v3MaxL);
 
@@ -91,13 +91,13 @@ MyRigidBody::MyRigidBody(std::vector<vector3> a_pointList)
 	m_v3MaxG = m_v3MaxL;
 
 	//with the max and the min we calculate the center
-	m_v3Center = (m_v3MaxL + m_v3MinL) / 2.0f;
+	center = (m_v3MaxL + m_v3MinL) / 2.0f;
 
 	//we calculate the distance between min and max vectors
 	m_v3HalfWidth = (m_v3MaxL - m_v3MinL) / 2.0f;
 	
 	//Get the distance between the center and either the min or the max
-	m_fRadius = glm::distance(m_v3Center, m_v3MinL);
+	m_fRadius = glm::distance(center, m_v3MinL);
 }
 MyRigidBody::MyRigidBody(MyRigidBody const& other)
 {
@@ -108,7 +108,7 @@ MyRigidBody::MyRigidBody(MyRigidBody const& other)
 
 	m_v3Color = m_v3Color;
 
-	m_v3Center = m_v3Center;
+	center = center;
 	m_v3MinL = m_v3MinL;
 	m_v3MaxL = m_v3MaxL;
 
@@ -138,8 +138,8 @@ void MyRigidBody::AddToRenderList(void)
 	if (!m_bVisible)
 		return;
 
-	//m_pMeshMngr->AddWireCubeToRenderList(glm::translate(m_m4ToWorld, m_v3Center) * glm::scale(m_v3HalfWidth * 2.0f), C_WHITE);
-	m_pMeshMngr->AddWireSphereToRenderList(glm::translate(m_m4ToWorld, m_v3Center) * glm::scale(vector3(m_fRadius)), m_v3Color);
+	//m_pMeshMngr->AddWireCubeToRenderList(glm::translate(m_m4ToWorld, center) * glm::scale(m_v3HalfWidth * 2.0f), C_WHITE);
+	m_pMeshMngr->AddWireSphereToRenderList(glm::translate(m_m4ToWorld, center) * glm::scale(vector3(m_fRadius)), m_v3Color);
 }
 bool MyRigidBody::IsColliding(MyRigidBody* const other)
 {

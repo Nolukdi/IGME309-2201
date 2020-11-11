@@ -79,7 +79,7 @@ void Mesh::Release(void)
 Mesh::Mesh()
 {
 	Init();
-	m_uID = m_nIndexer;
+	id = m_nIndexer;
 	m_nIndexer++;
 }
 Mesh::Mesh(Mesh& other)
@@ -104,7 +104,7 @@ Mesh::Mesh(Mesh& other)
 	m_v3Tint = other.m_v3Tint;
 	m_v3Wireframe = other.m_v3Wireframe;
 
-	m_uID = m_nIndexer;
+	id = m_nIndexer;
 	m_nIndexer++;
 }
 Mesh& Mesh::operator=(Mesh& other)
@@ -125,7 +125,7 @@ void Mesh::Instantiate(Mesh* const other)
 
 	m_pOriginal = other;
 
-	m_sName = other->m_sName + std::to_string(m_uID);
+	m_sName = other->m_sName + std::to_string(id);
 
 	m_bBinded = other->m_bBinded;
 	m_uVertexCount = other->m_uVertexCount;
@@ -233,7 +233,7 @@ void Mesh::SetTangentList(std::vector<vector3> a_lTangent) { m_lVertexTan = a_lT
 std::vector<vector3> Mesh::GetTangentList(void){ return m_lVertexTan; }
 void Mesh::SetBitangentList(std::vector<vector3> a_lBitangent) { m_lVertexBin = a_lBitangent; }
 std::vector<vector3> Mesh::GetBitangetList(void){ return m_lVertexBin; }
-uint Mesh::GetUniqueIdentifier(void) { return m_uID; }
+uint Mesh::GetUniqueIdentifier(void) { return id; }
 vector3 Mesh::GetTint(void){ return m_v3Tint; }
 void Mesh::SetTint(vector3 a_v3Tint) { m_v3Tint = a_v3Tint; }
 String Mesh::GetName(void){ return m_sName; }

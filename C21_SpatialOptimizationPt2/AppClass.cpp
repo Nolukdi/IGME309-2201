@@ -31,7 +31,7 @@ void Application::InitVariables(void)
 		}
 	}
 	m_uOctantLevels = 1;
-	m_pRoot = new Octant(m_uOctantLevels,5);
+	base = new Octant(m_uOctantLevels,5);
 	m_pEntityMngr->Update();
 }
 void Application::Update(void)
@@ -54,8 +54,8 @@ void Application::Update(void)
 		{
 			bStarted = true;
 			m_pSystem->StartTimerOnClock(0.5, nClock);
-			SafeDelete(m_pRoot);
-			m_pRoot = new Octant(m_uOctantLevels, 5);
+			SafeDelete(base);
+			base = new Octant(m_uOctantLevels, 5);
 		}
 	}
 	//Update Entity Manager
@@ -71,9 +71,9 @@ void Application::Display(void)
 
 	//display octree
 	if (m_uOctantID == -1)
-		m_pRoot->Display();
+		base->Display();
 	else
-		m_pRoot->Display(m_uOctantID);
+		base->Display(m_uOctantID);
 	
 	// draw a skybox
 	m_pMeshMngr->AddSkyboxToRenderList();
@@ -93,7 +93,7 @@ void Application::Display(void)
 void Application::Release(void)
 {
 	//Release the octree
-	SafeDelete(m_pRoot);
+	SafeDelete(base);
 
 	//release GUI
 	ShutdownGUI();

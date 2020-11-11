@@ -30,6 +30,9 @@ void Application::InitVariables(void)
 		}
 	}
 	m_uOctantLevels = 1;
+
+	//Initializes octree with default entity count
+	base = new MyOctant(m_uOctantLevels, 5);
 	m_pEntityMngr->Update();
 }
 void Application::Update(void)
@@ -42,7 +45,7 @@ void Application::Update(void)
 
 	//Is the first person camera active?
 	CameraRotation();
-	
+
 	//Update Entity Manager
 	m_pEntityMngr->Update();
 
@@ -54,26 +57,40 @@ void Application::Display(void)
 	// Clear the screen
 	ClearScreen();
 
-	//display octree
-	//m_pRoot->Display();
-	
+	//If the octant ID is reset
+	if (m_uOctantID == -1)
+	{
+		//Display the base octree
+		base->Display();
+	}
+
+	//If not
+	else
+	{
+		//Display octree with current ID
+		base->Display(m_uOctantID);
+	}
+
 	// draw a skybox
 	m_pMeshMngr->AddSkyboxToRenderList();
-	
+
 	//render list call
 	m_uRenderCallCount = m_pMeshMngr->Render();
 
 	//clear the render list
 	m_pMeshMngr->ClearRenderList();
-	
+
 	//draw gui,
 	DrawGUI();
-	
+
 	//end the current frame (internally swaps the front and back buffers)
 	m_pWindow->display();
 }
 void Application::Release(void)
 {
+	//Get rid of the octree
+	SafeDelete(base);
+
 	//release GUI
 	ShutdownGUI();
 }

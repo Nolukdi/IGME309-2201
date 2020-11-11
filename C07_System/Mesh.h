@@ -25,7 +25,7 @@ protected:
 
 	uint m_uMaterialIndex = 0; //Material index of this mesh
 	uint m_uVertexCount = 0; //Number of vertices in this Mesh
-	uint m_uID = 0; //Identifier of the mesh (each mesh has a unique UID)
+	uint id = 0; //Identifier of the mesh (each mesh has a unique UID)
 
 	GLuint m_VAO = 0;			//OpenGL Vertex Array Object
 	GLuint m_VBO = 0;			//OpenGL Vertex Array Object

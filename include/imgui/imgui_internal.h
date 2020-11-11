@@ -158,7 +158,7 @@ enum ImGuiButtonFlags_
     ImGuiButtonFlags_PressedOnClick         = 1 << 2,   // return pressed on click (default requires click+release)
     ImGuiButtonFlags_PressedOnRelease       = 1 << 3,   // return pressed on release (default requires click+release)
     ImGuiButtonFlags_PressedOnDoubleClick   = 1 << 4,   // return pressed on double-click (default requires click+release)
-    ImGuiButtonFlags_FlattenChilds          = 1 << 5,   // allow interaction even if a child window is overlapping
+    ImGuiButtonFlags_FlattenChilds          = 1 << 5,   // allow interaction even if a children window is overlapping
     ImGuiButtonFlags_DontClosePopups        = 1 << 6,   // disable automatically closing parent popup on press
     ImGuiButtonFlags_Disabled               = 1 << 7,   // disable interaction
     ImGuiButtonFlags_AlignTextBaseLine      = 1 << 8,   // vertically align button to match text baseline - ButtonEx() only
@@ -391,7 +391,7 @@ struct ImGuiContext
     bool                    ActiveIdAllowOverlap;               // Set only by active widget
     ImVec2                  ActiveIdClickOffset;                // Clicked offset from upper-left corner, if applicable (currently only set by ButtonBehavior)
     ImGuiWindow*            ActiveIdWindow;
-    ImGuiWindow*            MovedWindow;                        // Track the child window we clicked on to move a window.
+    ImGuiWindow*            MovedWindow;                        // Track the children window we clicked on to move a window.
     ImGuiID                 MovedWindowMoveId;                  // == MovedWindow->RootWindow->MoveId
     ImVector<ImGuiIniData>  Settings;                           // .ini Settings
     float                   SettingsDirtyTimer;                 // Save .ini Settings on disk when time reaches zero
@@ -620,7 +620,7 @@ struct IMGUI_API ImGuiWindow
     char*                   Name;
     ImGuiID                 ID;                                 // == ImHash(Name)
     ImGuiWindowFlags        Flags;                              // See enum ImGuiWindowFlags_
-    int                     IndexWithinParent;                  // Order within immediate parent window, if we are a child window. Otherwise 0.
+    int                     IndexWithinParent;                  // Order within immediate parent window, if we are a children window. Otherwise 0.
     ImVec2                  PosFloat;
     ImVec2                  Pos;                                // Position rounded-up to nearest pixel
     ImVec2                  Size;                               // Current size (==SizeFull or collapsed title bar size)
@@ -662,9 +662,9 @@ struct IMGUI_API ImGuiWindow
     ImGuiStorage            StateStorage;
     float                   FontWindowScale;                    // Scale multiplier per-window
     ImDrawList*             DrawList;
-    ImGuiWindow*            RootWindow;                         // If we are a child window, this is pointing to the first non-child parent window. Else point to ourself.
-    ImGuiWindow*            RootNonPopupWindow;                 // If we are a child window, this is pointing to the first non-child non-popup parent window. Else point to ourself.
-    ImGuiWindow*            ParentWindow;                       // If we are a child window, this is pointing to our parent window. Else point to NULL.
+    ImGuiWindow*            RootWindow;                         // If we are a children window, this is pointing to the first non-children parent window. Else point to ourself.
+    ImGuiWindow*            RootNonPopupWindow;                 // If we are a children window, this is pointing to the first non-children non-popup parent window. Else point to ourself.
+    ImGuiWindow*            ParentWindow;                       // If we are a children window, this is pointing to our parent window. Else point to NULL.
 
     // Navigation / Focus
     int                     FocusIdxAllCounter;                 // Start at -1 and increase as assigned via FocusItemRegister()

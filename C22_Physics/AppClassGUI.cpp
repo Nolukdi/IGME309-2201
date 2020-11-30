@@ -46,7 +46,8 @@ void Application::DrawGUI(void)
 			ImGui::Text("	 F3: Orthographic Y\n");
 			ImGui::Text("	 F4: Orthographic Z\n");
 			ImGui::Separator();
-			ImGui::Text("Arrows: Apply force to Steve\n");
+			ImGui::Text("Steve finds the shortest path to the cow always and moves towards it\n");
+			ImGui::Text("    Arrow Keys: Apply force to pig\n");
 		}
 		ImGui::End();
 	}
@@ -172,7 +173,7 @@ bool Application::CreateFontsTexture()
 	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, width, height, 0, GL_RGBA, GL_UNSIGNED_BYTE, pixels);
 
 	// Store our identifier
-	io.Fonts->TexID = (void *)(intptr_t)gui.m_uFontTexture;
+	io.Fonts->TexID = (void*)(intptr_t)gui.m_uFontTexture;
 
 	// Restore state
 	glBindTexture(GL_TEXTURE_2D, last_texture);
@@ -187,7 +188,7 @@ bool Application::CreateDeviceObjects()
 	glGetIntegerv(GL_ARRAY_BUFFER_BINDING, &last_array_buffer);
 	glGetIntegerv(GL_VERTEX_ARRAY_BINDING, &last_vertex_array);
 
-	const GLchar *vertex_shader =
+	const GLchar* vertex_shader =
 		"#version 330\n"
 		"uniform mat4 ProjMtx;\n"
 		"in vec2 Position;\n"
@@ -279,7 +280,7 @@ void Application::NewFrame()
 	io.DeltaTime = fDelta;
 	gui.m_dTimeTotal += fDelta;
 
-	
+
 	// Start the frame
 	ImGui::NewFrame();
 }
@@ -307,7 +308,7 @@ void Application::InitIMGUI(void)
 	io.KeyMap[ImGuiKey_X] = sf::Keyboard::X;
 	io.KeyMap[ImGuiKey_Y] = sf::Keyboard::Y;
 	io.KeyMap[ImGuiKey_Z] = sf::Keyboard::Z;
-		
+
 	// We are using the alternative; set this to NULL and call ImGui::GetDrawData() after ImGui::Render() to get the same ImDrawData pointer.
 	io.RenderDrawListsFn = NULL; // = RenderDrawListsFunction;
 	io.SetClipboardTextFn = NULL;

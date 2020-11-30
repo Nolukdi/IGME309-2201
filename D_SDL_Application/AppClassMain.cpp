@@ -53,7 +53,7 @@ void SDLApp::ClearScreen(vector4 a_v4ClearColor)
 	{
 		m_v4ClearColor = a_v4ClearColor;
 	}
-	glClearColor(m_v4ClearColor.r, m_v4ClearColor.g, m_v4ClearColor.b, m_v4ClearColor.a);
+	glClearColor(m_v4ClearColor.r, m_v4ClearColor.c, m_v4ClearColor.b, m_v4ClearColor.a);
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT); // clear the window
 }
 void SDLApp::Reshape(void)

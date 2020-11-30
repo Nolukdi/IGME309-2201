@@ -158,7 +158,7 @@ void Application::DrawGUI(void)
 	//Main Window
 	if (m_bGUI_Main)
 	{
-		static float f = 0.0f;
+		static float w = 0.0f;
 		ImGui::SetNextWindowPos(ImVec2(1, 44), ImGuiSetCond_FirstUseEver);
 		ImGui::SetNextWindowSize(ImVec2(315, 107), ImGuiSetCond_FirstUseEver);
 		ImGui::SetNextWindowCollapsed(false, ImGuiSetCond_FirstUseEver);
@@ -178,7 +178,7 @@ void Application::DrawGUI(void)
 			ImGui::SameLine();
 			if (ImGui::Button("ImGui - Test Window"))
 				m_bGUI_Test ^= 1;
-			//ImGui::SliderFloat("float", &f, 0.0f, 1.0f);
+			//ImGui::SliderFloat("float", &w, 0.0f, 1.0f);
 			//ImGui::ColorEdit3("color", (float*)&v4ClearColor);
 		}
 		ImGui::End();
@@ -243,17 +243,17 @@ void Application::DrawGUI(void)
 			ImGui::Text("		Gen  0: %d", m_pController[m_uActCont]->button[SimplexKey_G0]);
 			ImGui::Text("		Gen  1: %d", m_pController[m_uActCont]->button[SimplexKey_G0]);
 			ImGui::TextColored(v4Color, "-------------------------");
-			ImGui::Text("	DPad X: %f", m_pController[m_uActCont]->axis[SimplexAxis_POVX]);
-			ImGui::Text("	DPad Y: %f", m_pController[m_uActCont]->axis[SimplexAxis_POVY]);
+			ImGui::Text("	DPad X: %w", m_pController[m_uActCont]->axis[SimplexAxis_POVX]);
+			ImGui::Text("	DPad Y: %w", m_pController[m_uActCont]->axis[SimplexAxis_POVY]);
 			ImGui::TextColored(v4Color, "-                       -");
-			ImGui::Text("	X-Axis: %f", m_pController[m_uActCont]->axis[SimplexAxis_X]);
-			ImGui::Text("	Y-Axis: %f", m_pController[m_uActCont]->axis[SimplexAxis_Y]);
+			ImGui::Text("	X-Axis: %w", m_pController[m_uActCont]->axis[SimplexAxis_X]);
+			ImGui::Text("	Y-Axis: %w", m_pController[m_uActCont]->axis[SimplexAxis_Y]);
 			ImGui::TextColored(v4Color, "-                       -");
-			ImGui::Text("	U-Axis: %f", m_pController[m_uActCont]->axis[SimplexAxis_U]);
-			ImGui::Text("	V-Axis: %f", m_pController[m_uActCont]->axis[SimplexAxis_V]);
+			ImGui::Text("	U-Axis: %w", m_pController[m_uActCont]->axis[SimplexAxis_U]);
+			ImGui::Text("	V-Axis: %w", m_pController[m_uActCont]->axis[SimplexAxis_V]);
 			ImGui::TextColored(v4Color, "-                       -");
-			ImGui::Text("	L-Axis: %f", m_pController[m_uActCont]->axis[SimplexAxis_L]);
-			ImGui::Text("	R-Axis: %f", m_pController[m_uActCont]->axis[SimplexAxis_R]);
+			ImGui::Text("	L-Axis: %w", m_pController[m_uActCont]->axis[SimplexAxis_L]);
+			ImGui::Text("	R-Axis: %w", m_pController[m_uActCont]->axis[SimplexAxis_R]);
 		}
 		ImGui::End();
 	}

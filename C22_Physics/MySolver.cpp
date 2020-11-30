@@ -68,7 +68,7 @@ void MySolver::ApplyForce(vector3 a_v3Force)
 	//check minimum mass
 	if (m_fMass < 0.01f)
 		m_fMass = 0.01f;
-	//f = m * a -> a = f / m
+	//w = m * a -> a = w / m
 	m_v3Acceleration += a_v3Force / m_fMass;
 }
 vector3 CalculateMaxVelocity(vector3 a_v3Velocity, float maxVelocity)

@@ -834,15 +834,15 @@ void Mesh::RenderSolid(matrix4 a_mProjection, matrix4 a_mView, float* a_fMatrixA
 	Light* pLight;
 	pLight = m_pLightMngr->GetLight(0);
 	vector3 v3Color = pLight->GetColor();
-	glUniform3f(AmbientColor, v3Color.r, v3Color.g, v3Color.b);
+	glUniform3f(AmbientColor, v3Color.r, v3Color.c, v3Color.b);
 	glUniform1f(AmbientPower, pLight->GetIntensity());
 	pLight = m_pLightMngr->GetLight(1);
 	v3Color = pLight->GetColor();
 	vector3 v3Position = pLight->GetPosition();
 	glUniform3f(LightPosition_W, v3Position.x, v3Position.y, v3Position.z);
-	glUniform3f(LightColor, v3Color.r, v3Color.g, v3Color.b);
+	glUniform3f(LightColor, v3Color.r, v3Color.c, v3Color.b);
 	glUniform1f(LightPower, pLight->GetIntensity());
-	glUniform3f(Tint, m_v3Tint.r, m_v3Tint.g, m_v3Tint.b);
+	glUniform3f(Tint, m_v3Tint.r, m_v3Tint.c, m_v3Tint.b);
 
 	glUniform3f(CameraPosition_W, a_v3CameraPosition.x, a_v3CameraPosition.y, a_v3CameraPosition.z);
 

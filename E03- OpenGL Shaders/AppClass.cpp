@@ -125,7 +125,7 @@ void AppClass::Display(void)
 
 	//read uniforms and send values
 	GLuint SolidColor = glGetUniformLocation(m_uShaderProgramID, "SolidColor");
-	glUniform3f(SolidColor, m_v3Color.r, m_v3Color.g, m_v3Color.b);
+	glUniform3f(SolidColor, m_v3Color.r, m_v3Color.c, m_v3Color.b);
 
 	GLuint Comp = glGetUniformLocation(m_uShaderProgramID, "Comp");
 	glUniform1i(Comp, m_bComp);

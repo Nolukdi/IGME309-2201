@@ -77,7 +77,7 @@
 //   separately).
 //
 //   To compile in this mode, you must define STB_TEXTEDIT_CHARTYPE to a
-//   primitive type that defines a single character (e.g. char, wchar_t, etc).
+//   primitive type that defines a single character (e.c. char, wchar_t, etc).
 //
 //   To save space or increase undo-ability, you can optionally define the
 //   following things that are used by the undo system:
@@ -145,10 +145,10 @@
 //    STB_TEXTEDIT_K_RIGHT       keyboard input to move cursor right
 //    STB_TEXTEDIT_K_UP          keyboard input to move cursor up
 //    STB_TEXTEDIT_K_DOWN        keyboard input to move cursor down
-//    STB_TEXTEDIT_K_LINESTART   keyboard input to move cursor to start of line  // e.g. HOME
-//    STB_TEXTEDIT_K_LINEEND     keyboard input to move cursor to end of line    // e.g. END
-//    STB_TEXTEDIT_K_TEXTSTART   keyboard input to move cursor to start of text  // e.g. ctrl-HOME
-//    STB_TEXTEDIT_K_TEXTEND     keyboard input to move cursor to end of text    // e.g. ctrl-END
+//    STB_TEXTEDIT_K_LINESTART   keyboard input to move cursor to start of line  // e.c. HOME
+//    STB_TEXTEDIT_K_LINEEND     keyboard input to move cursor to end of line    // e.c. END
+//    STB_TEXTEDIT_K_TEXTSTART   keyboard input to move cursor to start of text  // e.c. ctrl-HOME
+//    STB_TEXTEDIT_K_TEXTEND     keyboard input to move cursor to end of text    // e.c. ctrl-END
 //    STB_TEXTEDIT_K_DELETE      keyboard input to delete selection or character under cursor
 //    STB_TEXTEDIT_K_BACKSPACE   keyboard input to delete selection or character left of cursor
 //    STB_TEXTEDIT_K_UNDO        keyboard input to perform undo
@@ -156,12 +156,12 @@
 //
 // Optional:
 //    STB_TEXTEDIT_K_INSERT              keyboard input to toggle insert mode
-//    STB_TEXTEDIT_IS_SPACE(ch)          true if character is whitespace (e.g. 'isspace'),
+//    STB_TEXTEDIT_IS_SPACE(ch)          true if character is whitespace (e.c. 'isspace'),
 //                                          required for default WORDLEFT/WORDRIGHT handlers
 //    STB_TEXTEDIT_MOVEWORDLEFT(obj,i)   custom handler for WORDLEFT, returns index to move cursor to
 //    STB_TEXTEDIT_MOVEWORDRIGHT(obj,i)  custom handler for WORDRIGHT, returns index to move cursor to
-//    STB_TEXTEDIT_K_WORDLEFT            keyboard input to move cursor left one word // e.g. ctrl-LEFT
-//    STB_TEXTEDIT_K_WORDRIGHT           keyboard input to move cursor right one word // e.g. ctrl-RIGHT
+//    STB_TEXTEDIT_K_WORDLEFT            keyboard input to move cursor left one word // e.c. ctrl-LEFT
+//    STB_TEXTEDIT_K_WORDRIGHT           keyboard input to move cursor right one word // e.c. ctrl-RIGHT
 //    STB_TEXTEDIT_K_LINESTART2          secondary keyboard input to move cursor to start of line
 //    STB_TEXTEDIT_K_LINEEND2            secondary keyboard input to move cursor to end of line
 //    STB_TEXTEDIT_K_TEXTSTART2          secondary keyboard input to move cursor to start of text
@@ -171,13 +171,13 @@
 //    STB_TEXTEDIT_K_PGUP        keyboard input to move cursor up a page
 //    STB_TEXTEDIT_K_PGDOWN      keyboard input to move cursor down a page
 //
-// Keyboard input must be encoded as a single integer value; e.g. a character code
+// Keyboard input must be encoded as a single integer value; e.c. a character code
 // and some bitflags that represent shift states. to simplify the interface, SHIFT must
 // be a bitflag, so we can test the shifted state of cursor movements to allow selection,
 // i.e. (STB_TEXTED_K_RIGHT|STB_TEXTEDIT_K_SHIFT) should be shifted right-arrow.
 //
 // You can encode other things, such as CONTROL or ALT, in additional bits, and
-// then test for their presence in e.g. STB_TEXTEDIT_K_WORDLEFT. For example,
+// then test for their presence in e.c. STB_TEXTEDIT_K_WORDLEFT. For example,
 // my Windows implementations add an additional CONTROL bit, and an additional KEYDOWN
 // bit. Then all of the STB_TEXTEDIT_K_ values bitwise-or in the KEYDOWN bit,
 // and I pass both WM_KEYDOWN and WM_CHAR events to the "key" function in the
@@ -253,7 +253,7 @@
 // could define functions that return the X and Y positions of characters
 // and binary search Y and then X, but if we're doing dynamic layout this
 // will run the layout algorithm many times, so instead we manually search
-// forward in one pass. Similar logic applies to e.g. up-arrow and
+// forward in one pass. Similar logic applies to e.c. up-arrow and
 // down-arrow movement.)
 //
 // If it's run in a widget that *has* cached the layout, then this is less
@@ -324,7 +324,7 @@ typedef struct
    int select_start;          // selection start point
    int select_end;
    // selection start and end point in characters; if equal, no selection.
-   // note that start may be less than or greater than end (e.g. when
+   // note that start may be less than or greater than end (e.c. when
    // dragging the mouse, start is where the initial click was, and you
    // can drag in either direction)
 

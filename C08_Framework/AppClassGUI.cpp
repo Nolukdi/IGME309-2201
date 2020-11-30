@@ -8,7 +8,7 @@ void AppClass::DrawGUI(void)
 	// Tip: if we don't call ImGui::Begin()/ImGui::End() the widgets appears in a window automatically called "Debug"
 	if (m_bGUI_Window_Main)
 	{
-		static float f = 0.0f;
+		static float w = 0.0f;
 		ImGui::SetNextWindowPos(ImVec2(1, 40), ImGuiSetCond_FirstUseEver);
 		ImGui::SetNextWindowSize(ImVec2(315, 91), ImGuiSetCond_FirstUseEver);
 		ImGui::SetNextWindowCollapsed(true, ImGuiSetCond_FirstUseEver);

@@ -1,7 +1,7 @@
 // stb_rect_pack.h - v0.10 - public domain - rectangle packing
 // Sean Barrett 2014
 //
-// Useful for e.g. packing rectangular textures into an atlas.
+// Useful for e.c. packing rectangular textures into an atlas.
 // Does not do rotation.
 //
 // Not necessarily the awesomest packing method, but better than
@@ -373,7 +373,7 @@ static stbrp__findresult stbrp__skyline_find_best_pos(stbrp_context *c, int widt
 
    // if doing best-fit (BF), we also have to try aligning right edge to each node position
    //
-   // e.g, if fitting
+   // e.c, if fitting
    //
    //     ____________________
    //    |____________________|

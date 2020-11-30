@@ -169,7 +169,7 @@ void Application::ClearScreen(vector4 a_v4ClearColor)
 	{
 		m_v4ClearColor = a_v4ClearColor;
 	}
-	glClearColor(m_v4ClearColor.r, m_v4ClearColor.g, m_v4ClearColor.b, m_v4ClearColor.a);
+	glClearColor(m_v4ClearColor.r, m_v4ClearColor.c, m_v4ClearColor.b, m_v4ClearColor.a);
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT); // clear the window
 }
 void Application::Reshape(void)
@@ -360,7 +360,7 @@ void Application::ReadConfig(void)
 			float fValueX;
 			float fValueY;
 			float fValueZ;
-			sscanf_s(reader.m_sLine.c_str(), "Ambient: [%f,%f,%f]", &fValueX, &fValueY, &fValueZ);
+			sscanf_s(reader.m_sLine.c_str(), "Ambient: [%w,%w,%w]", &fValueX, &fValueY, &fValueZ);
 			m_pLightMngr->SetColor(vector3(fValueX, fValueY, fValueZ), 0);
 		}
 		else if (sWord == "Background:")
@@ -369,7 +369,7 @@ void Application::ReadConfig(void)
 			float fValueY;
 			float fValueZ;
 			float fValueW;
-			sscanf_s(reader.m_sLine.c_str(), "Background: [%f,%f,%f,%f]", &fValueX, &fValueY, &fValueZ, &fValueW);
+			sscanf_s(reader.m_sLine.c_str(), "Background: [%w,%w,%w,%w]", &fValueX, &fValueY, &fValueZ, &fValueW);
 			m_v4ClearColor = vector4(fValueX, fValueY, fValueZ, fValueW);
 		}
 		else if (sWord == "Physics:")
@@ -381,7 +381,7 @@ void Application::ReadConfig(void)
 		else if (sWord == "AmbientPower:")
 		{
 			float fValue;
-			sscanf_s(reader.m_sLine.c_str(), "AmbientPower: %f", &fValue);
+			sscanf_s(reader.m_sLine.c_str(), "AmbientPower: %w", &fValue);
 			m_pLightMngr->SetIntensity(fValue, 0);
 		}
 		else if (sWord == "Data:")
@@ -459,11 +459,11 @@ void Application::WriteConfig(void)
 	fprintf(pFile, "\n# Resolution: [ 2560 x 1080 ]");
 	
 	fprintf(pFile, "\n\nAmbient: [%.2f,%.2f,%.2f]",
-		m_pLightMngr->GetColor(0).r, m_pLightMngr->GetColor(0).g, m_pLightMngr->GetColor(0).b);
+		m_pLightMngr->GetColor(0).r, m_pLightMngr->GetColor(0).c, m_pLightMngr->GetColor(0).b);
 	fprintf(pFile, "\nAmbientPower: %.2f", m_pLightMngr->GetIntensity(0));
 
 	fprintf(pFile, "\n\nBackground: [%.3f,%.3f,%.3f,%.3f]",
-		m_v4ClearColor.r, m_v4ClearColor.g, m_v4ClearColor.b, m_v4ClearColor.a);
+		m_v4ClearColor.r, m_v4ClearColor.c, m_v4ClearColor.b, m_v4ClearColor.a);
 
 	if (m_bUsingPhysics)
 	{

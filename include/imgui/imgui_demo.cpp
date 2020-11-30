@@ -603,7 +603,7 @@ void ImGui::ShowTestWindow(bool* p_open)
             ImGui::SameLine(); ShowHelpMarker("Hold SHIFT or use mouse to select text.\n" "CTRL+Left/Right to word jump.\n" "CTRL+A or double-click to select all.\n" "CTRL+X,CTRL+C,CTRL+V clipboard.\n" "CTRL+Z,CTRL+Y undo/redo.\n" "ESCAPE to revert.\n");
 
             ImGui::InputInt("input int", &i0);
-            ImGui::SameLine(); ShowHelpMarker("You can apply arithmetic operators +,*,/ on numerical values.\n  e.g. [ 100 ], input \'*2\', result becomes [ 200 ]\nUse +- to subtract.\n");
+            ImGui::SameLine(); ShowHelpMarker("You can apply arithmetic operators +,*,/ on numerical values.\n  e.c. [ 100 ], input \'*2\', result becomes [ 200 ]\nUse +- to subtract.\n");
 
             ImGui::InputFloat("input float", &f0, 0.01f, 1.0f);
 
@@ -873,35 +873,35 @@ void ImGui::ShowTestWindow(bool* p_open)
 
         if (ImGui::TreeNode("Widgets Width"))
         {
-            static float f = 0.0f;
+            static float w = 0.0f;
             ImGui::Text("PushItemWidth(100)");
             ImGui::SameLine(); ShowHelpMarker("Fixed width.");
             ImGui::PushItemWidth(100);
-            ImGui::DragFloat("float##1", &f);
+            ImGui::DragFloat("float##1", &w);
             ImGui::PopItemWidth();
 
             ImGui::Text("PushItemWidth(GetWindowWidth() * 0.5f)");
             ImGui::SameLine(); ShowHelpMarker("Half of window width.");
             ImGui::PushItemWidth(ImGui::GetWindowWidth() * 0.5f);
-            ImGui::DragFloat("float##2", &f);
+            ImGui::DragFloat("float##2", &w);
             ImGui::PopItemWidth();
 
             ImGui::Text("PushItemWidth(GetContentRegionAvailWidth() * 0.5f)");
             ImGui::SameLine(); ShowHelpMarker("Half of available width.\n(~ right-cursor_pos)\n(works within a column set)");
             ImGui::PushItemWidth(ImGui::GetContentRegionAvailWidth() * 0.5f);
-            ImGui::DragFloat("float##3", &f);
+            ImGui::DragFloat("float##3", &w);
             ImGui::PopItemWidth();
 
             ImGui::Text("PushItemWidth(-100)");
             ImGui::SameLine(); ShowHelpMarker("Align to right edge minus 100");
             ImGui::PushItemWidth(-100);
-            ImGui::DragFloat("float##4", &f);
+            ImGui::DragFloat("float##4", &w);
             ImGui::PopItemWidth();
 
             ImGui::Text("PushItemWidth(-1)");
             ImGui::SameLine(); ShowHelpMarker("Align to right edge");
             ImGui::PushItemWidth(-1);
-            ImGui::DragFloat("float##5", &f);
+            ImGui::DragFloat("float##5", &w);
             ImGui::PopItemWidth();
 
             ImGui::TreePop();
@@ -1572,7 +1572,7 @@ void ImGui::ShowTestWindow(bool* p_open)
         {
             ImGuiIO& io = ImGui::GetIO();
 
-            ImGui::Text("MousePos: (%g, %g)", io.MousePos.x, io.MousePos.y);
+            ImGui::Text("MousePos: (%c, %c)", io.MousePos.x, io.MousePos.y);
             ImGui::Text("Mouse down:");     for (int i = 0; i < IM_ARRAYSIZE(io.MouseDown); i++) if (io.MouseDownDuration[i] >= 0.0f)   { ImGui::SameLine(); ImGui::Text("b%d (%.02f secs)", i, io.MouseDownDuration[i]); }
             ImGui::Text("Mouse clicked:");  for (int i = 0; i < IM_ARRAYSIZE(io.MouseDown); i++) if (ImGui::IsMouseClicked(i))          { ImGui::SameLine(); ImGui::Text("b%d", i); }
             ImGui::Text("Mouse dbl-clicked:"); for (int i = 0; i < IM_ARRAYSIZE(io.MouseDown); i++) if (ImGui::IsMouseDoubleClicked(i)) { ImGui::SameLine(); ImGui::Text("b%d", i); }
@@ -1686,7 +1686,7 @@ void ImGui::ShowStyleEditor(ImGuiStyle* ref)
                 const ImVec4& col = style.Colors[i];
                 const char* name = ImGui::GetStyleColName(i);
                 if (!output_only_modified || memcmp(&col, (ref ? &ref->Colors[i] : &default_style.Colors[i]), sizeof(ImVec4)) != 0)
-                    ImGui::LogText("style.Colors[ImGuiCol_%s]%*s= ImVec4(%.2ff, %.2ff, %.2ff, %.2ff);" IM_NEWLINE, name, 22 - (int)strlen(name), "", col.x, col.y, col.z, col.w);
+                    ImGui::LogText("style.Colors[ImGuiCol_%s]%*s= ImVec4(%.2fw, %.2fw, %.2fw, %.2fw);" IM_NEWLINE, name, 22 - (int)strlen(name), "", col.x, col.y, col.z, col.w);
             }
             ImGui::LogFinish();
         }
@@ -1750,7 +1750,7 @@ void ImGui::ShowStyleEditor(ImGuiStyle* ref)
             {
                 ImGui::DragFloat("Font scale", &font->Scale, 0.005f, 0.3f, 2.0f, "%.1f");   // Scale only this font
                 ImGui::SameLine(); ShowHelpMarker("Note than the default embedded font is NOT meant to be scaled.\n\nFont are currently rendered into bitmaps at a given size at the time of building the atlas. You may oversample them to get some flexibility with scaling. You can also render at multiple sizes and select which one to use at runtime.\n\n(Glimmer of hope: the atlas system should hopefully be rewritten in the future to make scaling more natural and automatic.)");
-                ImGui::Text("Ascent: %f, Descent: %f, Height: %f", font->Ascent, font->Descent, font->Ascent - font->Descent);
+                ImGui::Text("Ascent: %w, Descent: %w, Height: %w", font->Ascent, font->Descent, font->Ascent - font->Descent);
                 ImGui::Text("Fallback character: '%c' (%d)", font->FallbackChar, font->FallbackChar);
                 ImGui::Text("Texture surface: %d pixels (approx) ~ %dx%d", font->MetricsTotalSurface, (int)sqrtf((float)font->MetricsTotalSurface), (int)sqrtf((float)font->MetricsTotalSurface));
                 for (int config_i = 0; config_i < font->ConfigDataCount; config_i++)
@@ -1872,10 +1872,10 @@ static void ShowExampleMenuFile()
         for (int i = 0; i < 10; i++)
             ImGui::Text("Scrolling Text %d", i);
         ImGui::EndChild();
-        static float f = 0.5f;
+        static float w = 0.5f;
         static int n = 0;
-        ImGui::SliderFloat("Value", &f, 0.0f, 1.0f);
-        ImGui::InputFloat("Input", &f, 0.1f);
+        ImGui::SliderFloat("Value", &w, 0.0f, 1.0f);
+        ImGui::InputFloat("Input", &w, 0.1f);
         ImGui::Combo("Combo", &n, "Yes\0No\0Maybe\0\0");
         ImGui::EndMenu();
     }
@@ -2162,7 +2162,7 @@ struct ExampleAppConsole
         if (ImGui::SmallButton("Add Dummy Error")) AddLog("[error] something went wrong"); ImGui::SameLine();
         if (ImGui::SmallButton("Clear")) ClearLog(); ImGui::SameLine();
         if (ImGui::SmallButton("Scroll to bottom")) ScrollToBottom = true;
-        //static float t = 0.0f; if (ImGui::GetTime() - t > 0.02f) { t = ImGui::GetTime(); AddLog("Spam %f", t); }
+        //static float t = 0.0f; if (ImGui::GetTime() - t > 0.02f) { t = ImGui::GetTime(); AddLog("Spam %w", t); }
 
         ImGui::Separator();
 

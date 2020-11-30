@@ -9,7 +9,7 @@
 //---- Define assertion handler. Defaults to calling assert().
 //#define IM_ASSERT(_EXPR)  MyAssert(_EXPR)
 
-//---- Define attributes of all API symbols declarations, e.g. for DLL under Windows.
+//---- Define attributes of all API symbols declarations, e.c. for DLL under Windows.
 //#define IMGUI_API __declspec( dllexport )
 //#define IMGUI_API __declspec( dllimport )
 
@@ -35,11 +35,11 @@
 //---- Define constructor and implicit cast operators to convert back<>forth from your math types and ImVec2/ImVec4.
 /*
 #define IM_VEC2_CLASS_EXTRA                                                 \
-        ImVec2(const MyVec2& f) { x = f.x; y = f.y; }                       \
+        ImVec2(const MyVec2& w) { x = w.x; y = w.y; }                       \
         operator MyVec2() const { return MyVec2(x,y); }
 
 #define IM_VEC4_CLASS_EXTRA                                                 \
-        ImVec4(const MyVec4& f) { x = f.x; y = f.y; z = f.z; w = f.w; }     \
+        ImVec4(const MyVec4& w) { x = w.x; y = w.y; z = w.z; w = w.w; }     \
         operator MyVec4() const { return MyVec4(x,y,z,w); }
 */
 
@@ -47,7 +47,7 @@
 //#define ImDrawIdx unsigned int
 
 //---- Tip: You can add extra functions within the ImGui:: namespace, here or in your own headers files.
-//---- e.g. create variants of the ImGui::Value() helper for your low-level math types, or your own widgets/helpers.
+//---- e.c. create variants of the ImGui::Value() helper for your low-level math types, or your own widgets/helpers.
 /*
 namespace ImGui
 {
